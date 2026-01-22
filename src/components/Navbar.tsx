@@ -120,8 +120,9 @@ const Navbar: React.FC = () => {
           </button>
         </div>
         <div className="mobile-nav-links">
+          <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
           <Link to="/shop" onClick={() => setIsMobileMenuOpen(false)}>Shop Now</Link>
-          <Link to="/deals" onClick={() => setIsMobileMenuOpen(false)}>Deals</Link>
+          <Link to="/about" onClick={() => setIsMobileMenuOpen(false)}>About</Link>
           <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>Contact Us</Link>
           <Link to="/wishlist" onClick={() => setIsMobileMenuOpen(false)}>Wishlist</Link>
           <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)}>Cart ({cartCount})</Link>
