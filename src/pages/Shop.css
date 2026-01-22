@@ -6,25 +6,147 @@
   width: 100%;
 }
 
-.shop-header {
-  background-color: rgba(0,0,0,0.05);
-  text-align: center;
-  padding: 4rem 1rem;
-  margin-bottom: 0;
+.shop-header-split {
+  display: flex;
+  height: 50vh;
+  min-height: 400px;
+  width: 100%;
+  padding: 1rem;
+  gap: 1rem;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-bottom: 1px solid var(--color-border);
 }
 
-.shop-header h1 {
+.shop-banner-video {
+  width: 40%;
+  position: relative;
+  overflow: hidden;
+  background-color: #000;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.shop-banner-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+.shop-banner-visuals {
+  width: 60%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  color: #fff;
+  background-color: #1a1a1a;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.slide-indicators {
+  position: absolute;
+  top: 1.5rem;
+  left: 2rem;
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+}
+
+.slide-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.slide-dot.active {
+  background-color: #fff;
+  transform: scale(1.3);
+  box-shadow: 0 0 8px rgba(255,255,255,0.6);
+}
+
+.banner-images-slideshow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.banner-slide-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 1.5s ease-in-out, transform 10s ease;
+  opacity: 0;
+}
+
+.banner-slide-img.active {
+  opacity: 1;
+}
+
+.shop-header-split:hover .banner-slide-img.active {
+  transform: scale(1.05);
+}
+
+.visuals-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 3rem 4rem;
+  max-width: 90%;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.visuals-content h1 {
   font-family: 'Playfair Display', serif;
-  font-size: 3rem;
-  color: var(--color-text-main);
-  margin-bottom: 1rem;
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
   letter-spacing: 1px;
 }
 
-.shop-header p {
+.visuals-content p {
   font-family: 'Lato', sans-serif;
-  color: var(--color-text-light);
   font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  opacity: 0.9;
+}
+
+@media (max-width: 900px) {
+  .shop-header-split {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .shop-banner-video {
+    width: 100%;
+    height: 250px;
+  }
+
+  .shop-banner-visuals {
+    width: 100%;
+    height: 300px;
+  }
+  
+  .visuals-content h1 {
+    font-size: 2.5rem;
+  }
 }
 
 .shop-container {
@@ -517,6 +639,53 @@
   border-color: var(--color-primary-dark);
   color: var(--color-white);
   box-shadow: 0 4px 15px rgba(58, 75, 59, 0.2);
+}
+
+/* Ticker Bar */
+.shop-ticker-bar {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  padding: 0.4rem 0;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  position: relative;
+  border-bottom: 2px solid rgba(0,0,0,0.1);
+  
+  /* Texture Pattern - Speckled/Noise Look */
+  background-image: 
+    radial-gradient(rgba(255,255,255,0.2) 1px, transparent 1px),
+    radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px);
+  background-size: 4px 4px, 6px 6px;
+  background-position: 0 0, 3px 3px;
+}
+
+.ticker-track {
+  display: inline-block;
+  white-space: nowrap;
+  animation: ticker-move 35s linear infinite;
+}
+
+.ticker-item {
+  display: inline-block;
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.ticker-separator {
+  display: inline-block;
+  margin: 0 2rem;
+  opacity: 0.5;
+  font-size: 0.8rem;
+  vertical-align: middle;
+}
+
+@keyframes ticker-move {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 @media (max-width: 768px) {

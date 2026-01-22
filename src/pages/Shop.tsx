@@ -1,7 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import ProductCard from '../components/ProductCard';
 import './Shop.css';
 import { ChevronDown } from 'lucide-react';
+
+import collectionVideo from '../assets/our-collection/exovita.mp4';
+import collectionImg1 from '../assets/our-collection/Gemini_Generated_Image_88p17088p17088p1.png';
+import collectionImg2 from '../assets/our-collection/Gemini_Generated_Image_ktcxhuktcxhuktcx.png';
 
 import hairOil1 from '../assets/hair oil/hair_oil_1.jpg';
 import hairOil2 from '../assets/hair oil/hair_oil_2.png';
@@ -98,11 +102,72 @@ const Shop: React.FC = () => {
 
   const currentSortLabel = SORT_OPTIONS.find(opt => opt.value === sortBy)?.label;
 
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const backgroundImages = [collectionImg1, collectionImg2];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % backgroundImages.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="shop-page" onClick={() => mobileFilterOpen && setMobileFilterOpen(false)}>
-      <div className="shop-header">
-        <h1>Our Collection</h1>
-        <p>Premium natural care products for your enhanced lifestyle</p>
+      <div className="shop-header-split">
+        <div className="shop-banner-video">
+          <video autoPlay muted loop playsInline>
+            <source src={collectionVideo} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <div className="video-overlay"></div>
+        </div>
+        <div className="shop-banner-visuals">
+          <div className="slide-indicators">
+            {backgroundImages.map((_, index) => (
+              <div 
+                key={index} 
+                className={`slide-dot ${index === currentImageIndex ? 'active' : ''}`}
+                onClick={() => setCurrentImageIndex(index)}
+              />
+            ))}
+          </div>
+          <div className="banner-images-slideshow">
+             {backgroundImages.map((img, index) => (
+                <img 
+                  key={index}
+                  src={img} 
+                  alt={`Natural Luxury ${index + 1}`} 
+                  className={`banner-slide-img ${index === currentImageIndex ? 'active' : ''}`} 
+                />
+             ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="shop-ticker-bar">
+        <div className="ticker-track">
+          <span className="ticker-item">100% ORGANIC INGREDIENTS</span>
+          <span className="ticker-separator">•</span>
+          <span className="ticker-item">CRUELTY FREE</span>
+          <span className="ticker-separator">•</span>
+          <span className="ticker-item">HANDCRAFTED LUXURY</span>
+          <span className="ticker-separator">•</span>
+          <span className="ticker-item">SUSTAINABLE PACKAGING</span>
+          <span className="ticker-separator">•</span>
+          <span className="ticker-item">DERMATOLOGICALLY TESTED</span>
+          <span className="ticker-separator">•</span>
+          <span className="ticker-item">100% ORGANIC INGREDIENTS</span>
+          <span className="ticker-separator">•</span>
+          <span className="ticker-item">CRUELTY FREE</span>
+          <span className="ticker-separator">•</span>
+          <span className="ticker-item">HANDCRAFTED LUXURY</span>
+          <span className="ticker-separator">•</span>
+          <span className="ticker-item">SUSTAINABLE PACKAGING</span>
+          <span className="ticker-separator">•</span>
+          <span className="ticker-item">DERMATOLOGICALLY TESTED</span>
+          <span className="ticker-separator">•</span>
+        </div>
       </div>
 
       <div className="shop-container">
