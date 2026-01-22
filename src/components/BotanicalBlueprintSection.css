@@ -1,0 +1,520 @@
+.botanical-section {
+  padding: 6rem 2rem;
+  background-color: var(--color-background);
+  color: var(--color-primary-dark);
+}
+
+.botanical-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.botanical-header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.botanical-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  color: var(--color-primary-dark); /* Deep Sage */
+  margin-bottom: 1rem;
+}
+
+.botanical-header p {
+  font-family: 'Lato', sans-serif;
+  font-size: 1.1rem;
+  color: var(--color-text-light);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Category Wrapper */
+.blueprint-category {
+  margin-bottom: 6rem;
+}
+
+.category-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: var(--color-primary);
+  margin-bottom: 2.5rem;
+  text-align: center;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.category-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background-color: var(--color-primary);
+}
+
+/* Cards Grid */
+.botanical-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+/* Horizontal Scroll Marquee */
+.scrolling-wrapper {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  /* Fade out edges */
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+
+.scrolling-track {
+  display: flex;
+  gap: 2rem;
+  width: max-content;
+  animation: scroll-left 40s linear infinite;
+  padding: 1rem 0; /* Space for shadows */
+}
+
+.scrolling-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); } /* Move half width since doubled */
+}
+
+.scroll-card {
+  width: 300px;
+  flex-shrink: 0;
+}
+
+.card-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.botanical-card:hover .card-image img {
+  transform: scale(1.1);
+}
+
+/* Specific adjustment for Base Oils - Horizontal Poster Layout */
+.botanical-grid.base-oils {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0 1rem; /* prevent edge touching on small screens */
+}
+
+.botanical-grid.base-oils .botanical-card {
+  width: 100%;
+  max-width: 900px; /* Poster width */
+  flex: 0 0 auto;
+  flex-direction: row; /* Horizontal Layout: Image Left, Text Right */
+  align-items: stretch;
+  padding: 0; /* Remove padding so image is flush */
+  text-align: left;
+}
+
+.botanical-grid.base-oils .card-image {
+  flex: 0 0 45%; 
+  margin-bottom: 0;
+  border-radius: 0;
+  height: auto;
+  min-height: 350px;
+}
+
+.botanical-grid.base-oils .card-content {
+  flex: 1;
+  padding: 2.5rem; /* Reduced padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #fcfdfc;
+}
+
+.botanical-grid.base-oils .card-header {
+  text-align: left;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--color-primary-light);
+  padding-bottom: 0.8rem;
+  display: inline-block;
+  width: auto;
+  align-self: flex-start;
+}
+
+.botanical-grid.base-oils .card-header h3 {
+  font-size: 2rem; /* Reduced from 2.8rem to match category title size better */
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  letter-spacing: -0.5px;
+}
+
+.botanical-grid.base-oils .card-details {
+  align-items: flex-start;
+  gap: 0.8rem; /* Reduced gap */
+}
+
+.botanical-grid.base-oils .card-details li {
+  font-size: 1.1rem; /* Reduced from 1.3rem */
+  color: var(--color-text);
+  padding-left: 1.8rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+/* Custom Checkmark for Base Oils */
+.botanical-grid.base-oils .card-details li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--color-primary);
+  font-weight: bold;
+  font-size: 1.2rem; /* Reduced icon size */
+  display: block;
+}
+
+/* Card Styling */
+.botanical-card {
+  background-color: var(--color-white);
+  border: 1px solid rgba(92, 112, 94, 0.1); 
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.4s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  text-align: center; /* Center align text */
+}
+
+.botanical-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(58, 75, 59, 0.1); 
+  border-color: var(--color-primary);
+}
+
+.card-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0;
+  border-bottom: none; /* Remove border for cleaner look */
+}
+
+.card-header h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--color-primary-dark);
+  margin: 0;
+}
+
+.card-details {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-details li {
+  font-family: 'Lato', sans-serif;
+  color: var(--color-text-light);
+  margin-bottom: 0.5rem;
+  padding-left: 0;
+  position: relative;
+  line-height: 1.4;
+  font-size: 0.95rem;
+}
+
+/* Remove Custom Bullet Point */
+.card-details li::before {
+  content: none;
+}
+
+/* Connecting Line for Desktop - Animated Flow */
+.process-flow-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap; /* Prevent wrapping to keep timeline intact */
+  gap: 1rem;
+  position: relative;
+  padding: 8rem 0; /* More vertical space for zigzag */
+  min-height: 400px;
+}
+
+.process-flow-container::before {
+  content: '';
+  position: absolute;
+  top: 50%; /* Center vertically */
+  left: 50px;
+  right: 50px;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    rgba(92, 112, 94, 0.1) 0%, 
+    var(--color-primary) 50%, 
+    rgba(92, 112, 94, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  z-index: 0;
+  animation: flowLine 10s linear infinite;
+}
+
+@keyframes flowLine {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.process-node {
+  flex: 1;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+/* Zig Zag Layout Logic */
+/* Odd Nodes (Top): Label -> Icon -> Line Down */
+.process-node:nth-child(odd) {
+  flex-direction: column-reverse;
+  transform: translateY(-80px);
+}
+
+.process-node:nth-child(odd) .node-label {
+  margin-bottom: 1.5rem; /* Space between text and icon */
+}
+
+.process-node:nth-child(odd) .node-icon {
+  margin-bottom: 0;
+}
+
+/* Even Nodes (Bottom): Icon -> Label -> Line Up (from top) */
+.process-node:nth-child(even) {
+  flex-direction: column; /* Default */
+  transform: translateY(80px);
+}
+
+.process-node:nth-child(even) .node-label {
+  margin-top: 1.5rem; /* Space between icon and text */
+}
+
+.process-node:nth-child(even) .node-icon {
+  margin-bottom: 0;
+}
+
+/* Vertical Stems connecting to center line */
+/* Attach to node-icon to ensure it connects into the circle center visually */
+.process-node::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  background-color: rgba(92, 112, 94, 0.3);
+  z-index: -1;
+  height: 80px; /* Match translation distance */
+}
+
+/* Line for Odd (Top) nodes goes DOWN from the bottom */
+.process-node:nth-child(odd)::after {
+  top: 100%; /* Starts at bottom of node (icon bottom) */
+}
+
+/* Line for Even (Bottom) nodes goes UP from the top */
+.process-node:nth-child(even)::after {
+  bottom: 100%; /* Starts at top of node (icon top) */
+}
+
+.node-icon {
+  width: 80px;
+  height: 80px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border-radius: 50%;
+  border: 4px solid var(--color-background); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-weight: 700;
+  font-size: 1.5rem;
+  font-family: 'Playfair Display', serif;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  
+  /* Constant Pulse Animation - Slowed Down */
+  animation: nodePulse 8s ease-in-out infinite;
+}
+
+/* Staggered Delays for Sequence Effect - Adjusted for 8s duration */
+.process-node:nth-child(1) .node-icon { animation-delay: 0s; }
+.process-node:nth-child(2) .node-icon { animation-delay: 1.6s; }
+.process-node:nth-child(3) .node-icon { animation-delay: 3.2s; }
+.process-node:nth-child(4) .node-icon { animation-delay: 4.8s; }
+.process-node:nth-child(5) .node-icon { animation-delay: 6.4s; }
+
+@keyframes nodePulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    background-color: var(--color-primary);
+  }
+  50% { 
+    transform: scale(1.15);
+    box-shadow: 0 0 25px rgba(92, 112, 94, 0.5);
+    background-color: var(--color-primary-dark);
+  }
+}
+
+.process-node:hover .node-icon {
+  animation-play-state: paused;
+  transform: scale(1.1);
+  background-color: var(--color-primary-dark);
+}
+
+.node-label {
+  font-family: 'Lato', sans-serif;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  font-size: 1.05rem;
+  padding: 0 0.5rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .process-flow-container {
+    flex-wrap: wrap; /* Allow wrapping on tablet if needed, or switch to vertical */
+    padding: 4rem 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .botanical-section {
+    padding: 3rem 1rem;
+  }
+
+  .botanical-header h2 {
+    font-size: 2.2rem;
+  }
+  
+  /* Reset Zig Zag for Mobile -> Vertical Timeline */
+  .process-flow-container {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0;
+    gap: 2rem;
+    min-height: auto;
+    padding-left: 1rem;
+  }
+
+  /* Hide Horizontal Line */
+  .process-flow-container::before {
+    display: none;
+  }
+
+  /* Create Vertical Line */
+  .process-flow-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(1rem + 30px); /* Padding + Half Icon Width */
+    width: 2px;
+    background: linear-gradient(to bottom, 
+      rgba(92, 112, 94, 0.1) 0%, 
+      var(--color-primary) 50%, 
+      rgba(92, 112, 94, 0.1) 100%
+    );
+    z-index: 0;
+  }
+  
+  .process-node {
+    width: 100%;
+    transform: none !important; /* Remove zig zag */
+    flex-direction: row !important; /* Icon Left, Text Right */
+    align-items: center;
+    text-align: left;
+    gap: 1.5rem;
+    margin: 0;
+  }
+
+  .process-node::after {
+    display: none; /* Hide vertical stems */
+  }
+
+  /* Reset Label Margins */
+  .process-node:nth-child(odd) .node-label,
+  .process-node:nth-child(even) .node-label {
+    margin: 0;
+  }
+
+  .node-icon {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0; /* Prevent squishing */
+    margin: 0;
+    font-size: 1.2rem;
+    border-width: 3px;
+    z-index: 2; /* Sit on top of line */
+  }
+
+  .node-label {
+    font-size: 1.1rem;
+    padding: 0;
+  }
+  
+  /* Base Oils Mobile */
+  .botanical-grid.base-oils {
+     flex-direction: column;
+     align-items: center;
+     width: 100%;
+  }
+
+  .botanical-grid.base-oils .botanical-card {
+    width: 100%;
+    max-width: 380px;
+    flex-direction: column; /* Stack Image on Top */
+    height: auto;
+  }
+
+  .botanical-grid.base-oils .card-image {
+    width: 100%;
+    height: 250px;
+    flex: none; /* Reset flex */
+  }
+
+  .botanical-grid.base-oils .card-content {
+    padding: 1.5rem;
+    align-items: center;
+  }
+
+  .botanical-grid.base-oils .card-header {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .botanical-grid.base-oils .card-details {
+    align-items: center;
+  }
+}

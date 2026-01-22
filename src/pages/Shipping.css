@@ -1,0 +1,113 @@
+.shipping-page {
+  padding: 4rem 1rem;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  /* Premium radial gradient for depth */
+  background: radial-gradient(circle at 50% 30%, var(--color-primary), var(--color-secondary));
+  background-size: cover;
+  background-position: center;
+  background-attachment: scroll;
+}
+
+.shipping-container {
+  max-width: 900px;
+  width: 100%;
+  background-color: transparent;
+  padding: 3rem;
+  border-radius: 0;
+  box-shadow: none;
+  border: 2px solid var(--color-white);
+  position: relative;
+  margin: 1.5rem;
+}
+
+.shipping-container::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  right: -12px;
+  bottom: -12px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .shipping-container {
+    padding: 1.5rem;
+  }
+}
+
+.shipping-container h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-white);
+  text-align: center;
+}
+
+.intro-text {
+  font-family: 'Lato', sans-serif;
+  font-size: 1.1rem;
+  color: var(--color-white); /* Darker text */
+  line-height: 1.8;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.shipping-section {
+  margin: 2.5rem 0;
+  padding: 0; /* Removed padding */
+  background-color: transparent; /* Removed bg */
+  border-radius: 0; /* Removed border */
+  box-shadow: none; /* Removed shadow */
+}
+
+.shipping-section h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  margin-bottom: 1.2rem;
+  color: var(--color-white);
+}
+
+.shipping-section p {
+  font-family: 'Lato', sans-serif;
+  font-size: 1.05rem;
+  color: var(--color-white); /* Darker text */
+  line-height: 1.8;
+  margin-bottom: 0.8rem;
+}
+
+.shipping-section ul {
+  list-style: disc;
+  margin-left: 2rem;
+  margin-top: 1rem;
+}
+
+.shipping-section li {
+  font-family: 'Lato', sans-serif;
+  font-size: 1.05rem;
+  color: var(--color-white); /* Darker text */
+  margin-bottom: 0.8rem;
+  line-height: 1.7;
+}
+
+.shipping-section strong {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .shipping-container h1 {
+    font-size: 2.5rem;
+  }
+  
+  .shipping-section {
+    padding: 1.5rem;
+  }
+  
+  .shipping-section h2 {
+    font-size: 1.7rem;
+  }
+}

@@ -1,0 +1,207 @@
+.contact-widget {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  left: auto;
+  z-index: 1000;
+  width: 60px;
+  height: 60px;
+}
+
+.contact-toggle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  color: white;
+  position: relative;
+  z-index: 2;
+}
+
+.contact-toggle svg {
+  width: 28px;
+  height: 28px;
+}
+
+.contact-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.contact-toggle.active {
+  background-color: var(--color-white);
+  color: var(--color-gold);
+}
+
+.contact-options {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 50px;
+  height: 50px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.contact-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  background-color: white;
+  border-radius: 50%;
+  text-decoration: none;
+  color: var(--color-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: absolute;
+  pointer-events: auto;
+  opacity: 0;
+  transform: scale(0.5);
+  animation: popIn 0.4s forwards;
+}
+
+@keyframes popIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Hide text labels */
+.contact-option span {
+  display: none; 
+}
+
+/* Email - Top */
+.contact-option.email {
+  bottom: 70px;
+  right: 0;
+  transition-delay: 0.1s;
+  animation-delay: 0.1s;
+  color: #EA4335;
+}
+
+/* WhatsApp - Diagonal */
+.contact-option.whatsapp {
+  bottom: 55px;
+  right: 55px;
+  transition-delay: 0.05s;
+  animation-delay: 0.05s;
+}
+
+/* Phone - Left */
+.contact-option.phone {
+  bottom: 0;
+  right: 70px;
+  transition-delay: 0s;
+  animation-delay: 0s;
+}
+
+
+.contact-option svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.contact-option:hover {
+  transform: scale(1.15) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.contact-option.email:hover {
+  background-color: #EA4335;
+  color: white;
+}
+
+/* WhatsApp Option */
+.contact-option.whatsapp {
+  color: #25D366;
+}
+
+.contact-option.whatsapp:hover {
+  background-color: #25D366;
+  color: white;
+}
+
+/* Phone Option */
+.contact-option.phone {
+  color: #4285F4;
+}
+
+.contact-option.phone:hover {
+  background-color: #4285F4;
+  color: white;
+}
+
+/* Mobile Responsive & Tablet (Left Side Positioning) */
+@media (max-width: 1024px) {
+  .contact-widget {
+    bottom: 1.5rem;
+    left: 1.5rem;
+    right: auto; /* Reset right positioning */
+  }
+
+  /* Flip options container to align left */
+  .contact-options {
+    right: auto;
+    left: 5px;
+  }
+
+  /* Adjust icons to pop out to the RIGHT side */
+  
+  /* Email - Top (Centered relative to container) */
+  .contact-option.email {
+    right: auto;
+    left: 0;
+  }
+
+  /* WhatsApp - Diagonal Right */
+  .contact-option.whatsapp {
+    right: auto;
+    left: 55px;
+  }
+
+  /* Phone - Right Side */
+  .contact-option.phone {
+    right: auto;
+    left: 70px;
+  }
+
+  .contact-toggle {
+    width: 55px;
+    height: 55px;
+  }
+
+  .contact-toggle svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .contact-option {
+    padding: 0.65rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .contact-option svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-widget {
+    bottom: 1rem;
+    left: 1rem;
+  }
+}

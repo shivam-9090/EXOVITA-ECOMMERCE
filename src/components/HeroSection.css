@@ -1,0 +1,217 @@
+.hero-section {
+  width: 100%;
+  min-height: calc(100vh - 80px); /* Fill remaining screen */
+  background-color: var(--color-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  padding: 2rem 5%;
+}
+
+/* Background Texture/Gradient for subtle depth */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at 10% 20%, rgba(92, 112, 94, 0.05) 0%, transparent 50%);
+  z-index: 0;
+}
+
+.hero-container {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centered content block */
+  width: 100%;
+  max-width: 1400px;
+  position: relative;
+  z-index: 1;
+  gap: 6rem; /* Spacing between text and image */
+}
+
+/* --- Left Content --- */
+.hero-content {
+  flex: 1;
+  max-width: 600px;
+  opacity: 0;
+  animation: fadeUp 1s ease-out forwards 0.2s;
+}
+
+.hero-subtitle {
+  display: block;
+  font-family: 'Lato', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 0.9rem;
+  color: var(--color-primary);
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.hero-content h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 5.5rem; /* Large and Royal */
+  line-height: 1.1;
+  color: var(--color-primary-dark);
+  margin-bottom: 2rem;
+  font-weight: 400;
+}
+
+.highlight-text {
+  font-style: italic;
+  font-weight: 400;
+}
+
+.hero-content p {
+  font-family: 'Lato', sans-serif;
+  font-size: 1.25rem;
+  color: var(--color-text-light); /* Dark Grey */
+  margin-bottom: 3.5rem;
+  line-height: 1.6;
+  max-width: 450px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+/* Royal Button: Dark Green, No Gold */
+.btn-royal {
+  padding: 1rem 2.5rem;
+  background-color: var(--color-primary-dark);
+  color: var(--color-white);
+  font-family: 'Lato', sans-serif;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  transition: all 0.4s ease;
+  border: 1px solid var(--color-primary-dark);
+  border-radius: 30px;
+}
+
+.btn-royal:hover {
+  background-color: transparent;
+  color: var(--color-primary-dark);
+  box-shadow: 0 5px 15px rgba(58, 75, 59, 0.15);
+}
+
+.btn-minimal {
+  padding: 1rem 2.5rem;
+  color: var(--color-primary-dark);
+  font-family: 'Lato', sans-serif;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  border: 1px solid var(--color-primary-dark); /* Added border */
+  border-radius: 30px; /* Added rounded corners */
+  transition: all 0.4s ease;
+  background-color: transparent;
+}
+
+.btn-minimal:hover {
+  background-color: var(--color-primary-dark); /* Solid on hover */
+  color: var(--color-white);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(58, 75, 59, 0.15);
+}
+
+
+/* --- Right Visual: The Arch Frame --- */
+.hero-visual {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  opacity: 0;
+  animation: fadeIn 1.2s ease-out forwards 0.5s;
+}
+
+.image-frame {
+  width: 100%;
+  max-width: 500px;
+  height: 75vh; /* Tall vertical frame */
+  max-height: 800px;
+  border-radius: 400px 400px 0 0; /* The Arch */
+  overflow: hidden;
+  position: relative;
+  box-shadow: 20px 20px 0px rgba(92, 112, 94, 0.1); /* Architectural shadow, non-gold */
+}
+
+.image-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures bottle fills the arch nicely */
+  object-position: center top; /* Image positioned toward the top */
+  transition: transform 0.8s ease; /* Smooth transition for hover */
+}
+
+.image-frame:hover img {
+  transform: scale(1.05); /* Restore zoom effect */
+}
+
+
+/* --- Animations --- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
+/* --- Responsive --- */
+@media (max-width: 1200px) {
+  .hero-content h1 {
+    font-size: 4.5rem;
+  }
+  .image-frame {
+    height: 60vh;
+  }
+}
+
+@media (max-width: 1024px) {
+  .hero-container {
+    flex-direction: column-reverse; /* Image on top */
+    gap: 3rem;
+    text-align: center;
+  }
+  
+  .hero-content {
+    align-items: center;
+    max-width: 100%;
+  }
+
+  .hero-content p {
+    margin: 0 auto 2.5rem;
+  }
+  
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .image-frame {
+    height: 50vh;
+    max-width: 90%;
+    /* Keep Arch on mobile or simplify? Keep Arch, it's unique */
+    border-radius: 200px 200px 0 0; 
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 3.5rem;
+  }
+
+  .image-frame {
+    height: 45vh;
+  }
+}
