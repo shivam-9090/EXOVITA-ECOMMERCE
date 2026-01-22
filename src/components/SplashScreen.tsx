@@ -6,9 +6,21 @@ const SplashScreen: React.FC = () => {
   const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
-    // Show splash screen on every load/refresh
+    // Check if user has already visited in this session
+    const hasVisited = sessionStorage.getItem('hasVisited');
+
+    if (hasVisited) {
+      // If visited, do not show splash screen
+      setShouldRender(false);
+      return;
+    }
+
+    // If first time, show splash screen
     setShouldRender(true);
     setIsVisible(true);
+    
+    // Mark as visited for this session
+    sessionStorage.setItem('hasVisited', 'true');
     
     const timer = setTimeout(() => {
       setIsVisible(false);

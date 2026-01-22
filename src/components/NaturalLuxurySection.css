@@ -48,8 +48,7 @@
 .box-2 {
   grid-column: 1 / 2;
   grid-row: 2 / 4;
-  height: 700px;
-  align-self: start; 
+  height: 100%;
 }
 
 .box-3 {
@@ -66,7 +65,7 @@
   justify-content: center;
   z-index: 1;
   pointer-events: auto; 
-  padding-top: 5px;
+  padding-top: 40px;
 }
 
 .deco-badge {
@@ -278,16 +277,17 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 1.5rem;
   text-align: center;
+  overflow: hidden;
 }
 
 .beauty-img-wrapper img {
   width: 100%;
-  max-width: 350px; /* Constrain width to look good in frame */
-  height: 350px;    /* Fixed height for consistency */
-  object-fit: cover;
-  margin-bottom: 2rem;
+  max-width: 280px; /* Reduced size to fit within frame */
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 1.5rem;
 }
 
 .white-beauty-inner p {
@@ -326,7 +326,8 @@
 }
 
 .winter-img-wrap img {
-    width: 200px; /* Adjust size based on container */
+    width: 100%;
+    max-width: 350px;
     height: auto;
     object-fit: contain;
     border-radius: 0; /* No radius in ref photo */

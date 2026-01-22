@@ -273,7 +273,8 @@
 
 .product-feature-row {
   display: flex;
-  align-items: stretch;
+  align-items: center;
+  justify-content: center;
   gap: 4rem;
   margin-bottom: 6rem;
 }
@@ -324,11 +325,12 @@
 }
 
 .visual-block.frame-visual {
-  flex: 1;
-  min-height: 400px;
+  flex: 0 0 400px;
+  height: 500px;
   position: relative;
   border: 1px solid var(--color-primary);
   padding: 1rem;
+  margin-top: 4rem;
 }
 
 /* Placeholder styles replacing actual images with CSS art/blocks */
@@ -343,6 +345,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: top;
   display: block;
 }
 

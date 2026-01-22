@@ -1,7 +1,7 @@
 import React from 'react';
 import './NaturalLuxurySection.css';
 import showcase3 from '../assets/showcase-1.jpg';
-import showcase4 from '../assets/showcase-2.jpg';
+import showcase4 from '../assets/box-1.png';
 
 const NaturalLuxurySection: React.FC = () => {
   return (

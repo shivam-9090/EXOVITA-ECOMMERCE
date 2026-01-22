@@ -84,7 +84,7 @@ const Contact: React.FC = () => {
                   name="name" 
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="John Doe" 
+                  placeholder="Name" 
                   required 
                 />
               </div>
@@ -95,7 +95,7 @@ const Contact: React.FC = () => {
                   name="email" 
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="john@example.com" 
+                  placeholder="name@example.com" 
                   required 
                 />
               </div>

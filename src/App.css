@@ -1,4 +1,11 @@
 .app {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background-color: var(--color-background);
+}
+
+main {
+  flex: 1;
+  min-height: 80vh; /* Ensure content area takes up space even when empty/loading */
 }
