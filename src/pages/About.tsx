@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import './About.css';
 import AnimatedSection from '../components/AnimatedSection';
+import aboutVideo from '../assets/about/exo-1-reel.mp4';
 
 const About: React.FC = () => {
   useEffect(() => {
@@ -91,7 +92,11 @@ const About: React.FC = () => {
                 </ul>
               </div>
               <div className="visual-block frame-visual frame-visual-1">
-                <div className="frame-inner"></div>
+                <div className="frame-inner video-container">
+                  <video autoPlay muted playsInline loop={false} className="about-feature-video">
+                    <source src={aboutVideo} type="video/mp4" />
+                  </video>
+                </div>
               </div>
             </div>
           </AnimatedSection>

@@ -33,13 +33,35 @@
   position: relative;
   height: 70vh;
   min-height: 500px;
-  background-color: var(--color-primary-dark);
+  /* background-color: var(--color-primary-dark); */
+  background: linear-gradient(125deg, #000000, var(--color-primary-dark), #000000, var(--color-secondary), #000000);
+  background-size: 300% 300%;
+  animation: heroGradientResult 8s ease infinite;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: 2rem;
   color: var(--color-white);
+  overflow: hidden;
+}
+
+@keyframes heroGradientResult {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.about-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
 }
 
 .about-hero-content {
@@ -313,9 +335,15 @@
 .frame-visual-1 .frame-inner {
   width: 100%;
   height: 100%;
-  background-color: #e6e9e6; /* Placeholder color close to olive tint */
-  background-image: linear-gradient(135deg, #e6e9e6 25%, #dce0db 25%, #dce0db 50%, #e6e9e6 50%, #e6e9e6 75%, #dce0db 75%, #dce0db 100%);
-  background-size: 40px 40px;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.about-feature-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .frame-visual-2 .frame-inner {
