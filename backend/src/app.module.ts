@@ -22,8 +22,10 @@ import { BannersModule } from "./banners/banners.module";
 import { PagesModule } from "./pages/pages.module";
 import { LogsModule } from "./logs/logs.module";
 import { SettingsModule } from "./settings/settings.module";
+import { HealthController } from "./health.controller";
 
 @Module({
+  controllers: [HealthController],
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
