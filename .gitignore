@@ -20,6 +20,15 @@ backend/dist/
 frontend/dist/
 admin-panel/
 
+# Media assets (do not upload)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.webp
+*.mp4
+
 # Logs
 /logs/
 *.log
