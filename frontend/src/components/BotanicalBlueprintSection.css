@@ -1,0 +1,1046 @@
+/* --- NEW OPTIMIZED STYLES --- */
+.botanical-section-new {
+  padding: 0;
+  background-color: #fcfdfc;
+  border-top: 1px solid #eef0eb;
+}
+
+.botanical-container-new {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.botanical-header-new {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding-top: 4rem; /* Additional top spacing */
+}
+
+.botanical-header-new h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  color: var(--color-primary-dark);
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.botanical-header-new p {
+  font-family: 'Lato', sans-serif;
+  font-size: 1rem;
+  color: var(--color-text-light);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Ingredients Infinite Scroll */
+.scrolling-wrapper-new {
+  overflow-x: hidden; /* Desktop default: No scrollbar, no manual scroll */
+  overflow-y: hidden;
+  width: 100%;
+  position: relative;
+  margin-bottom: 4rem;
+  padding: 1rem 0;
+  
+  /* Hide scrollbars */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+/* Enable native scrolling for Mobile and Tablet explicitly */
+@media (max-width: 1024px) {
+  .scrolling-wrapper-new {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth touch scrolling */
+    cursor: grab;
+    user-select: none;
+  }
+  
+  .scrolling-wrapper-new:active {
+    cursor: grabbing;
+  }
+}
+
+.scrolling-wrapper-new::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.scrolling-track-new {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+  /* Animation removed in favor of JS-driven scroll for hybrid control */
+  padding-left: 0;
+}
+
+.scroll-card-new {
+  width: 250px;
+  flex-shrink: 0;
+  /* Optional: snap behavior if desired, but might fight auto-scroll */
+  /* scroll-snap-align: center; */ 
+}
+
+/* @keyframes removed */
+
+
+.ingredient-card {
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+}
+
+.ingredient-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+.ingredient-img-wrapper {
+  width: 100%;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  background-color: #f0f0f0;
+}
+
+.ingredient-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+  display: block;
+}
+
+.ingredient-card:hover .ingredient-img {
+  transform: scale(1.05);
+}
+
+.ingredient-info {
+  padding: 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ingredient-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.ingredient-benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ingredient-benefits li {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+  margin-bottom: 0.3rem;
+  position: relative;
+  padding-left: 12px;
+}
+
+.ingredient-benefits li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--color-gold);
+  font-size: 1.2em; /* Slightly larger bullet */
+  line-height: 1rem;
+}
+
+/* Process Timeline */
+.process-section {
+  background-color: #f8faf8;
+  padding: 2.5rem;
+  border-radius: 12px;
+}
+
+.process-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  text-align: center;
+  color: var(--color-secondary);
+  margin-bottom: 2.5rem;
+}
+
+.process-timeline {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Connecting Line */
+.process-timeline::before {
+  content: '';
+  position: absolute;
+  top: 15px; 
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #e0e0e0;
+  z-index: 1;
+}
+
+.process-step {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  flex: 1;
+  padding: 0 10px;
+}
+
+.step-marker {
+  width: 32px;
+  height: 32px;
+  background: var(--color-white);
+  border: 2px solid var(--color-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-weight: bold;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.process-step:hover .step-marker {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.step-label {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.9rem;
+  color: var(--color-secondary);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+@media (max-width: 768px) {
+  .botanical-section-new {
+    padding: 3rem 1rem;
+  }
+
+  .ingredients-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .process-timeline {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+    padding-left: 1rem;
+  }
+  
+  .process-timeline::before {
+    top: 0;
+    bottom: 0;
+    left: 15px; /* Align with marker center approx half of 32px */
+    width: 2px;
+    height: auto;
+    right: auto;
+  }
+
+  .process-step {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-align: left;
+    margin: 0;
+  }
+
+  .step-marker {
+    margin: 0;
+    flex-shrink: 0;
+  }
+}
+
+/* --- END NEW STYLES --- */
+.botanical-section-legacy {
+  padding: 6rem 2rem;
+  background-color: var(--color-background);
+  color: var(--color-primary-dark);
+}
+
+.botanical-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.botanical-header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.botanical-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  color: var(--color-primary-dark); /* Deep Sage */
+  margin-bottom: 1rem;
+}
+
+.botanical-header p {
+  font-family: 'Lato', sans-serif;
+  font-size: 1.1rem;
+  color: var(--color-text-light);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Category Wrapper */
+.blueprint-category {
+  margin-bottom: 6rem;
+}
+
+.category-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: var(--color-primary);
+  margin-bottom: 2.5rem;
+  text-align: center;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.category-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background-color: var(--color-primary);
+}
+
+/* Cards Grid */
+.botanical-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+/* Horizontal Scroll Marquee */
+.scrolling-wrapper {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  /* Fade out edges */
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+
+.scrolling-track {
+  display: flex;
+  gap: 2rem;
+  width: max-content;
+  animation: scroll-left 40s linear infinite;
+  padding: 1rem 0; /* Space for shadows */
+}
+
+.scrolling-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); } /* Move half width since doubled */
+}
+
+.scroll-card {
+  width: 300px;
+  flex-shrink: 0;
+}
+
+.card-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.botanical-card:hover .card-image img {
+  transform: scale(1.1);
+}
+
+/* Specific adjustment for Base Oils - Horizontal Poster Layout */
+.botanical-grid.base-oils {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0 1rem; /* prevent edge touching on small screens */
+}
+
+.botanical-grid.base-oils .botanical-card {
+  width: 100%;
+  max-width: 900px; /* Poster width */
+  flex: 0 0 auto;
+  flex-direction: row; /* Horizontal Layout: Image Left, Text Right */
+  align-items: stretch;
+  padding: 0; /* Remove padding so image is flush */
+  text-align: left;
+}
+
+.botanical-grid.base-oils .card-image {
+  flex: 0 0 45%; 
+  margin-bottom: 0;
+  border-radius: 0;
+  height: auto;
+  min-height: 350px;
+}
+
+.botanical-grid.base-oils .card-content {
+  flex: 1;
+  padding: 2.5rem; /* Reduced padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #fcfdfc;
+}
+
+.botanical-grid.base-oils .card-header {
+  text-align: left;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--color-primary-light);
+  padding-bottom: 0.8rem;
+  display: inline-block;
+  width: auto;
+  align-self: flex-start;
+}
+
+.botanical-grid.base-oils .card-header h3 {
+  font-size: 2rem; /* Reduced from 2.8rem to match category title size better */
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  letter-spacing: -0.5px;
+}
+
+.botanical-grid.base-oils .card-details {
+  align-items: flex-start;
+  gap: 0.8rem; /* Reduced gap */
+}
+
+.botanical-grid.base-oils .card-details li {
+  font-size: 1.1rem; /* Reduced from 1.3rem */
+  color: var(--color-text);
+  padding-left: 1.8rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+/* Custom Checkmark for Base Oils */
+.botanical-grid.base-oils .card-details li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--color-primary);
+  font-weight: bold;
+  font-size: 1.2rem; /* Reduced icon size */
+  display: block;
+}
+
+/* Card Styling */
+.botanical-card {
+  background-color: var(--color-white);
+  border: 1px solid rgba(92, 112, 94, 0.1); 
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.4s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  text-align: center; /* Center align text */
+}
+
+.botanical-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(58, 75, 59, 0.1); 
+  border-color: var(--color-primary);
+}
+
+.card-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0;
+  border-bottom: none; /* Remove border for cleaner look */
+}
+
+.card-header h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--color-primary-dark);
+  margin: 0;
+}
+
+.card-details {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-details li {
+  font-family: 'Lato', sans-serif;
+  color: var(--color-text-light);
+  margin-bottom: 0.5rem;
+  padding-left: 0;
+  position: relative;
+  line-height: 1.4;
+  font-size: 0.95rem;
+}
+
+/* Remove Custom Bullet Point */
+.card-details li::before {
+  content: none;
+}
+
+/* Connecting Line for Desktop - Animated Flow */
+.process-flow-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap; /* Prevent wrapping to keep timeline intact */
+  gap: 1rem;
+  position: relative;
+  padding: 8rem 0; /* More vertical space for zigzag */
+  min-height: 400px;
+}
+
+.process-flow-container::before {
+  content: '';
+  position: absolute;
+  top: 50%; /* Center vertically */
+  left: 50px;
+  right: 50px;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    rgba(92, 112, 94, 0.1) 0%, 
+    var(--color-primary) 50%, 
+    rgba(92, 112, 94, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  z-index: 0;
+  animation: flowLine 10s linear infinite;
+}
+
+@keyframes flowLine {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.process-node {
+  flex: 1;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+/* Zig Zag Layout Logic */
+/* Odd Nodes (Top): Label -> Icon -> Line Down */
+.process-node:nth-child(odd) {
+  flex-direction: column-reverse;
+  transform: translateY(-80px);
+}
+
+.process-node:nth-child(odd) .node-label {
+  margin-bottom: 1.5rem; /* Space between text and icon */
+}
+
+.process-node:nth-child(odd) .node-icon {
+  margin-bottom: 0;
+}
+
+/* Even Nodes (Bottom): Icon -> Label -> Line Up (from top) */
+.process-node:nth-child(even) {
+  flex-direction: column; /* Default */
+  transform: translateY(80px);
+}
+
+.process-node:nth-child(even) .node-label {
+  margin-top: 1.5rem; /* Space between icon and text */
+}
+
+.process-node:nth-child(even) .node-icon {
+  margin-bottom: 0;
+}
+
+/* Vertical Stems connecting to center line */
+/* Attach to node-icon to ensure it connects into the circle center visually */
+.process-node::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  background-color: rgba(92, 112, 94, 0.3);
+  z-index: -1;
+  height: 80px; /* Match translation distance */
+}
+
+/* Line for Odd (Top) nodes goes DOWN from the bottom */
+.process-node:nth-child(odd)::after {
+  top: 100%; /* Starts at bottom of node (icon bottom) */
+}
+
+/* Line for Even (Bottom) nodes goes UP from the top */
+.process-node:nth-child(even)::after {
+  bottom: 100%; /* Starts at top of node (icon top) */
+}
+
+.node-icon {
+  width: 80px;
+  height: 80px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border-radius: 50%;
+  border: 4px solid var(--color-background); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-weight: 700;
+  font-size: 1.5rem;
+  font-family: 'Playfair Display', serif;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  
+  /* Constant Pulse Animation - Slowed Down */
+  animation: nodePulse 8s ease-in-out infinite;
+}
+
+/* Staggered Delays for Sequence Effect - Adjusted for 8s duration */
+.process-node:nth-child(1) .node-icon { animation-delay: 0s; }
+.process-node:nth-child(2) .node-icon { animation-delay: 1.6s; }
+.process-node:nth-child(3) .node-icon { animation-delay: 3.2s; }
+.process-node:nth-child(4) .node-icon { animation-delay: 4.8s; }
+.process-node:nth-child(5) .node-icon { animation-delay: 6.4s; }
+
+@keyframes nodePulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    background-color: var(--color-primary);
+  }
+  50% { 
+    transform: scale(1.15);
+    box-shadow: 0 0 25px rgba(92, 112, 94, 0.5);
+    background-color: var(--color-primary-dark);
+  }
+}
+
+.process-node:hover .node-icon {
+  animation-play-state: paused;
+  transform: scale(1.1);
+  background-color: var(--color-primary-dark);
+}
+
+.node-label {
+  font-family: 'Lato', sans-serif;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  font-size: 1.05rem;
+  padding: 0 0.5rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .process-flow-container {
+    flex-wrap: wrap; /* Allow wrapping on tablet if needed, or switch to vertical */
+    padding: 4rem 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .botanical-section {
+    padding: 3rem 1rem;
+  }
+
+  .botanical-header h2 {
+    font-size: 2.2rem;
+  }
+  
+  /* Reset Zig Zag for Mobile -> Vertical Timeline */
+  .process-flow-container {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0;
+    gap: 2rem;
+    min-height: auto;
+    padding-left: 1rem;
+  }
+
+  /* Hide Horizontal Line */
+  .process-flow-container::before {
+    display: none;
+  }
+
+  /* Create Vertical Line */
+  .process-flow-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(1rem + 30px); /* Padding + Half Icon Width */
+    width: 2px;
+    background: linear-gradient(to bottom, 
+      rgba(92, 112, 94, 0.1) 0%, 
+      var(--color-primary) 50%, 
+      rgba(92, 112, 94, 0.1) 100%
+    );
+    z-index: 0;
+  }
+  
+  .process-node {
+    width: 100%;
+    transform: none !important; /* Remove zig zag */
+    flex-direction: row !important; /* Icon Left, Text Right */
+    align-items: center;
+    text-align: left;
+    gap: 1.5rem;
+    margin: 0;
+  }
+
+  .process-node::after {
+    display: none; /* Hide vertical stems */
+  }
+
+  /* Reset Label Margins */
+  .process-node:nth-child(odd) .node-label,
+  .process-node:nth-child(even) .node-label {
+    margin: 0;
+  }
+
+  .node-icon {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0; /* Prevent squishing */
+    margin: 0;
+    font-size: 1.2rem;
+    border-width: 3px;
+    z-index: 2; /* Sit on top of line */
+  }
+
+  .node-label {
+    font-size: 1.1rem;
+    padding: 0;
+  }
+  
+  /* Base Oils Mobile */
+  .botanical-grid.base-oils {
+     flex-direction: column;
+     align-items: center;
+     width: 100%;
+  }
+
+  .botanical-grid.base-oils .botanical-card {
+    width: 100%;
+    max-width: 380px;
+    flex-direction: column; /* Stack Image on Top */
+    height: auto;
+  }
+
+  .botanical-grid.base-oils .card-image {
+    width: 100%;
+    height: 250px;
+    flex: none; /* Reset flex */
+  }
+
+  .botanical-grid.base-oils .card-content {
+    padding: 1.5rem;
+    align-items: center;
+  }
+
+  .botanical-grid.base-oils .card-header {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .botanical-grid.base-oils .card-details {
+    align-items: center;
+  }
+}
+
+/* Before/After Comparison Section */
+.comparison-section {
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+  padding: 0 1rem;
+}
+
+.comparison-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  color: var(--color-primary-dark);
+  text-align: center;
+  margin-bottom: 3rem;
+  letter-spacing: 0.5px;
+}
+
+.comparison-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  align-items: center;
+}
+
+/* Benefits Box */
+.benefits-box {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border: 2px solid var(--color-primary);
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+.benefits-box h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: var(--color-primary-dark);
+  margin-bottom: 0.5rem;
+}
+
+.benefits-subtitle {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+.benefits-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.benefits-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e8e8e8;
+  font-family: 'Lato', sans-serif;
+  color: var(--color-secondary);
+  line-height: 1.6;
+}
+
+.benefits-list li:last-child {
+  border-bottom: none;
+}
+
+.benefit-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Interactive Slider Container */
+.slider-container {
+  position: relative;
+  cursor: ew-resize;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.slider-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 3px solid var(--color-primary);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+}
+
+.slider-image-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.slider-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+.slider-overlay {
+  z-index: 2;
+}
+
+.image-label {
+  position: absolute;
+  top: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--color-primary-dark);
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 1.5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 3;
+}
+
+.before-label {
+  left: 20px;
+}
+
+.after-label {
+  right: 20px;
+}
+
+/* Slider Line */
+.slider-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--color-primary);
+  transform: translateX(-50%);
+  z-index: 10;
+  cursor: ew-resize;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.slider-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  background: var(--color-primary);
+  border: 3px solid white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease;
+}
+
+.slider-handle:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.slider-arrow {
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  position: absolute;
+}
+
+.left-arrow {
+  left: 8px;
+}
+
+.right-arrow {
+  right: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .comparison-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .benefits-box {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .comparison-section {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .comparison-title {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .benefits-box {
+    padding: 1.5rem;
+  }
+
+  .benefits-box h4 {
+    font-size: 1.3rem;
+  }
+
+  .benefits-list li {
+    font-size: 0.9rem;
+    gap: 0.75rem;
+  }
+
+  .benefit-icon {
+    font-size: 1.1rem;
+  }
+
+  .slider-frame {
+    border-width: 2px;
+  }
+
+  .slider-handle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .image-label {
+    top: 15px;
+    padding: 6px 16px;
+    font-size: 0.75rem;
+  }
+
+  .before-label {
+    left: 15px;
+  }
+
+  .after-label {
+    right: 15px;
+  }
+}
+
+.comparison-frame {
+  display: none;
+}

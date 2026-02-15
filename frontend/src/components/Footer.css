@@ -1,0 +1,434 @@
+.footer-new {
+  background-image: var(--footer-bg);
+  background-size: cover;
+  background-position: center;
+  /* background: linear-gradient(to right, var(--color-secondary), var(--color-primary-dark)); */
+  color: var(--color-gold-light);
+  font-family: 'Playfair Display', serif;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  margin-top: auto;
+}
+
+/* Dark Overlay for readability - Removed */
+/* .footer-new::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.65);
+  z-index: 1;
+} */
+
+.footer-wrapper {
+  position: relative;
+  z-index: 2; /* Sit above overlay */
+  display: flex;
+  flex-direction: column;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4rem 2rem 1rem;
+  
+  /* Background Image removed from wrapper */
+}
+
+/* Add an overlay to the footer to ensure text readability against the image */
+.footer-new::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Adjust opacity as needed */
+  z-index: 1; /* Below content */
+}
+
+/* Removed wrapper overlay */
+/* .footer-wrapper::before { ... } */
+
+@media (min-width: 900px) {
+  .footer-wrapper {
+    flex-direction: row;
+    justify-content: space-between;
+    min-height: 500px;
+  }
+}
+
+/* --- Left Side --- */
+.footer-left {
+  flex: 1.5; /* Made bigger */
+  padding-right: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 2;
+  position: relative;
+}
+
+/* Removed previous background on footer-left */
+/* .footer-left::before { ... } */
+
+/* --- Center Line --- */
+.footer-divider {
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 0 2rem;
+  align-self: stretch;
+}
+
+@media (max-width: 899px) {
+  .footer-divider {
+    display: none;
+  }
+}
+
+.brand-header {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  text-align: center; /* Center align the text */
+  width: 100%;
+}
+
+.brand-title {
+  font-size: 4rem; /* Big size */
+  line-height: 1;
+  letter-spacing: 8px; /* Increased spacing for impact */
+  font-weight: 700; /* Bolder */
+  color: var(--color-white);
+  margin-bottom: 0;
+  white-space: nowrap; /* Ensure one line */
+  text-shadow: 0 4px 8px rgba(0,0,0,0.5); /* Enhance readability */
+}
+
+/* Removed brand-subtitle styles as element is removed */
+/* .brand-subtitle { ... } */
+
+.newsletter-container h3 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--color-white);
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+
+.newsletter-input-group {
+  display: flex;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  max-width: 450px;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+}
+
+.newsletter-input-group input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--color-white);
+  padding: 0.8rem;
+  font-family: 'Lato', sans-serif;
+  font-size: 1rem;
+  outline: none;
+}
+
+.newsletter-input-group input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.newsletter-input-group button {
+  background: var(--color-white);
+  color: var(--color-secondary);
+  border: none;
+  padding: 0.8rem 2rem;
+  font-family: 'Lato', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.newsletter-input-group button:hover {
+  background: var(--color-gold);
+}
+
+.newsletter-terms {
+  font-family: 'Lato', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  max-width: 450px;
+  margin-bottom: 3rem;
+  line-height: 1.5;
+}
+
+.social-section {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.social-section span {
+  font-family: 'Lato', sans-serif;
+  font-size: 1rem;
+  color: var(--color-white);
+}
+
+.social-icons-list {
+  display: flex;
+  gap: 1rem;
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: var(--color-white);
+  transition: all 0.3s ease;
+}
+
+.social-btn:hover {
+  border-color: var(--color-gold);
+  background: var(--color-gold);
+  color: var(--color-secondary);
+}
+
+/* --- Right Side --- */
+.footer-right {
+  flex: 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Center content vertically */
+}
+
+.footer-right::before {
+  display: none;
+}
+
+/* Ensure text is readable */
+.footer-right h4,
+.footer-right a,
+.footer-left h2,
+.footer-left h3,
+.footer-left p,
+.footer-left span {
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+@media (max-width: 899px) {
+  .footer-right {
+    margin-top: 3rem;
+    justify-content: flex-start;
+  }
+}
+
+.footer-links-grid {
+  display: flex;
+  gap: 6rem; /* Increased gap */
+  position: relative; /* Added for z-index context */
+  z-index: 2;
+  width: 100%;
+  justify-content: center;
+}
+
+.footer-nav-column h4 {
+  font-size: 1.1rem;
+  color: var(--color-white);
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+}
+
+.footer-nav-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-nav-column ul li {
+  margin-bottom: 0.8rem;
+}
+
+.footer-nav-column ul li a {
+  text-decoration: none;
+  font-family: 'Lato', sans-serif;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  transition: color 0.3s;
+}
+
+.footer-nav-column ul li a:hover {
+  color: var(--color-gold);
+}
+
+/* --- Bottom Bar --- */
+.footer-bottom-bar {
+  position: relative;
+  z-index: 2; /* Sit above overlay */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.8rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer-bottom-bar a {
+  color: inherit;
+  text-decoration: none;
+  margin-left: 0.5rem;
+}
+
+.footer-bottom-bar a:hover {
+  color: var(--color-white);
+}
+
+/* ===== RESPONSIVE STYLES ===== */
+
+/* Tablet (max-width: 768px) */
+@media (max-width: 768px) {
+  .footer-wrapper {
+    padding: 3rem 1.5rem 0.5rem;
+  }
+
+  .footer-left {
+    padding-right: 0;
+  }
+
+  .brand-title {
+    font-size: 2.5rem;
+    letter-spacing: 4px;
+  }
+
+  .newsletter-container h3 {
+    font-size: 1.2rem;
+  }
+
+  .newsletter-input-group {
+    max-width: 100%;
+  }
+
+  .newsletter-terms {
+    margin-bottom: 2rem;
+    max-width: 100%;
+  }
+
+  .footer-links-grid {
+    gap: 3rem;
+  }
+
+  .footer-bottom-bar {
+    padding: 0.8rem 1.5rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+}
+
+/* Mobile (max-width: 576px) */
+@media (max-width: 576px) {
+  .footer-wrapper {
+    padding: 2rem 1rem 0.5rem;
+  }
+
+  .brand-title {
+    font-size: 2rem;
+    letter-spacing: 2px;
+    white-space: normal; /* Allow wrapping on very small screens */
+  }
+
+  .newsletter-container h3 {
+    font-size: 1.1rem;
+    line-height: 1.3;
+  }
+
+  .newsletter-input-group {
+    flex-direction: column;
+    padding: 0.3rem;
+  }
+
+  .newsletter-input-group input {
+    padding: 0.7rem;
+    font-size: 0.95rem;
+  }
+
+  .newsletter-input-group button {
+    width: 100%;
+    padding: 0.7rem;
+    margin-top: 0.3rem;
+  }
+
+  .newsletter-terms {
+    font-size: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .social-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .social-section span {
+    font-size: 0.95rem;
+  }
+
+  .social-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .footer-links-grid {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .footer-nav-column h4 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .footer-nav-column ul li {
+    margin-bottom: 0.6rem;
+  }
+
+  .footer-nav-column ul li a {
+    font-size: 0.9rem;
+  }
+
+  .footer-bottom-bar {
+    padding: 0.8rem 1rem;
+    font-size: 0.75rem;
+  }
+
+  .footer-bottom-bar a {
+    margin-left: 0.3rem;
+  }
+}
+
+/* Small Mobile (max-width: 375px) */
+@media (max-width: 375px) {
+  .brand-title {
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+  }
+
+  .newsletter-container h3 {
+    font-size: 1rem;
+  }
+
+  .footer-bottom-bar {
+    font-size: 0.7rem;
+  }
+}

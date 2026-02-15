@@ -1,0 +1,254 @@
+/* Before/After Comparison Section */
+.comparison-section {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 4rem;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.comparison-subtitle {
+  font-family: 'Lato', sans-serif;
+  font-size: 1rem;
+  color: var(--color-primary);
+  text-align: center;
+  margin-bottom: 0.5rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.comparison-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 4rem;
+  color: var(--color-primary-dark);
+  text-align: center;
+  margin-bottom: 3rem;
+  letter-spacing: 0.5px;
+  padding: 0 1rem;
+}
+
+/* Interactive Slider Container */
+.slider-container {
+  position: relative;
+  cursor: ew-resize;
+  user-select: none;
+  -webkit-user-select: none;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+}
+
+.slider-frame {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  border: none;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.slider-image-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.slider-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+.slider-overlay {
+  z-index: 2;
+}
+
+.after-label-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.image-label {
+  position: absolute;
+  top: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--color-primary-dark);
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 1.5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 3;
+}
+
+.before-label {
+  left: 20px;
+}
+
+.after-label {
+  right: 20px;
+}
+
+/* Slider Line */
+.slider-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--color-primary);
+  transform: translateX(-50%);
+  z-index: 10;
+  cursor: ew-resize;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.slider-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  background: var(--color-primary);
+  border: 3px solid white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease;
+}
+
+.slider-handle:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.slider-arrow {
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  position: absolute;
+}
+
+.left-arrow {
+  left: 8px;
+}
+
+.right-arrow {
+  right: 8px;
+}
+
+/* Responsive Design for Comparison Section */
+@media (max-width: 1024px) {
+  .comparison-title {
+    font-size: 3rem;
+  }
+  
+  .slider-frame {
+    height: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .comparison-section {
+    padding-top: 3rem;
+  }
+
+  .comparison-subtitle {
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+  }
+
+  .comparison-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .slider-frame {
+    height: 400px;
+  }
+
+  .slider-handle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .image-label {
+    top: 15px;
+    padding: 6px 16px;
+    font-size: 0.75rem;
+  }
+
+  .before-label {
+    left: 15px;
+  }
+
+  .after-label {
+    right: 15px;
+  }
+}
+
+@media (max-width: 600px) {
+  .comparison-section {
+    padding-top: 2.5rem;
+  }
+  
+  .comparison-subtitle {
+    font-size: 0.75rem;
+  }
+  
+  .comparison-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .slider-frame {
+    height: 350px;
+  }
+}
+
+@media (max-width: 480px) {
+  .comparison-title {
+    font-size: 1.3rem;
+  }
+  
+  .slider-frame {
+    height: 300px;
+  }
+  
+  .slider-handle {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .slider-arrow {
+    font-size: 0.85rem;
+  }
+  
+  .image-label {
+    top: 10px;
+    padding: 5px 12px;
+    font-size: 0.7rem;
+  }
+  
+  .before-label {
+    left: 10px;
+  }
+  
+  .after-label {
+    right: 10px;
+  }
+}

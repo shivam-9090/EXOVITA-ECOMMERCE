@@ -1,0 +1,130 @@
+.admin-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f6f8;
+  padding: 24px;
+}
+
+.admin-login-card {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 28px;
+}
+
+.admin-login-card h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  color: #111827;
+}
+
+.admin-login-card p {
+  margin: 0 0 20px;
+  color: #6b7280;
+}
+
+.admin-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-login-field label {
+  font-size: 14px;
+  color: #374151;
+}
+
+.admin-login-field input {
+  height: 44px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 15px;
+}
+
+.admin-login-form button {
+  height: 44px;
+  border: none;
+  border-radius: 8px;
+  background: #1f2937;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-login-form button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.admin-login-error {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  font-size: 14px;
+}
+
+.admin-login-setup {
+  border: 1px solid #dbeafe;
+  background: #eff6ff;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-login-setup p {
+  margin: 0;
+  color: #1e3a8a;
+  font-size: 14px;
+}
+
+.admin-setup-btn {
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-setup-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.admin-2fa-qr-block {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+.admin-2fa-qr {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+}
+
+.admin-2fa-text,
+.admin-2fa-key {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #374151;
+  word-break: break-word;
+}

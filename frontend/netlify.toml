@@ -1,0 +1,11 @@
+[build]
+  command = "npm run build:admin"
+  publish = "dist"
+
+[build.environment]
+  VITE_APP_VARIANT = "admin"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
