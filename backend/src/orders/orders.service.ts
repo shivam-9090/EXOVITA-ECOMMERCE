@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { OrderStatus } from "@prisma/client";
+import { OrderStatus, PaymentMethod } from "@prisma/client";
 
 @Injectable()
 export class OrdersService {
@@ -13,6 +13,12 @@ export class OrdersService {
   // Create new order from cart
   async createOrder(userId: string, createOrderDto: any) {
     const { addressId, paymentMethod, notes } = createOrderDto;
+
+    if (![PaymentMethod.COD, PaymentMethod.RAZORPAY].includes(paymentMethod)) {
+      throw new BadRequestException(
+        "Invalid payment method. Supported methods: COD, RAZORPAY",
+      );
+    }
 
     // Get user's cart with items
     const cart = await this.prisma.cart.findUnique({

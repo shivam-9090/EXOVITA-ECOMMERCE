@@ -55,9 +55,9 @@
     "qrcode": "^1.5.4",
     "redis": "^4.6.12",
     "reflect-metadata": "^0.2.1",
+    "razorpay": "^2.9.4",
     "rxjs": "^7.8.1",
-    "speakeasy": "^2.0.0",
-    "stripe": "^14.12.0"
+    "speakeasy": "^2.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.4.9",

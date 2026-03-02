@@ -385,7 +385,7 @@ const AdminSettings: React.FC = () => {
       id: "PAYMENT",
       label: "Payment Gateways",
       icon: CreditCard,
-      desc: "Setup Stripe, PayPal and other providers",
+      desc: "Setup Razorpay and other payment providers",
     },
     {
       id: "EMAIL",
