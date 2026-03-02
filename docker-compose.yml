@@ -90,6 +90,21 @@ services:
     networks:
       - exovita-network
 
+  admin-panel:
+    build:
+      context: ./frontend
+      dockerfile: ../admin-panel/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000/api}
+    container_name: exovita-admin
+    restart: unless-stopped
+    ports:
+      - "${ADMIN_PORT:-3002}:3002"
+    depends_on:
+      - backend
+    networks:
+      - exovita-network
+
 networks:
   exovita-network:
     driver: bridge
