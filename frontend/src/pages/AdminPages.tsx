@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import {
   Plus,
   Edit2,
@@ -56,7 +57,7 @@ const AdminPages = () => {
       setPages(response.data);
     } catch (error) {
       console.error("Error fetching pages:", error);
-      alert("Failed to fetch pages");
+      toast.error("Failed to fetch pages");
     } finally {
       setLoading(false);
     }
@@ -111,7 +112,7 @@ const AdminPages = () => {
       fetchPages();
     } catch (error: any) {
       console.error("Error saving page:", error);
-      alert(error.response?.data?.message || "Failed to save page");
+      toast.error(error.response?.data?.message || "Failed to save page");
     }
   };
 
@@ -128,7 +129,7 @@ const AdminPages = () => {
       fetchPages();
     } catch (error) {
       console.error("Error toggling publish:", error);
-      alert("Failed to toggle publish status");
+      toast.error("Failed to toggle publish status");
     }
   };
 
@@ -145,7 +146,7 @@ const AdminPages = () => {
       fetchPages();
     } catch (error) {
       console.error("Error deleting page:", error);
-      alert("Failed to delete page");
+      toast.error("Failed to delete page");
     }
   };
 

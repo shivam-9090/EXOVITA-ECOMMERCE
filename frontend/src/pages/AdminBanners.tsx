@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import {
   Plus,
   Edit2,
@@ -106,7 +107,7 @@ const AdminBanners = () => {
       resetForm();
       fetchBanners();
     } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to save banner");
+      toast.error(error.response?.data?.message || "Failed to save banner");
     } finally {
       setSubmitting(false);
     }
@@ -136,7 +137,7 @@ const AdminBanners = () => {
       });
       fetchBanners();
     } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to delete banner");
+      toast.error(error.response?.data?.message || "Failed to delete banner");
     }
   };
 
@@ -155,7 +156,7 @@ const AdminBanners = () => {
       fetchBanners();
     } catch (error: any) {
       console.error("Toggle error", error);
-      alert("Failed to update status");
+      toast.error("Failed to update status");
     }
   };
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import { useLocation } from "react-router-dom";
 import {
   Settings as SettingsIcon,
@@ -126,7 +127,7 @@ const AdminSettings: React.FC = () => {
       fetchSettings();
     } catch (error) {
       console.error("Error saving settings:", error);
-      alert("Failed to save settings");
+      toast.error("Failed to save settings");
     } finally {
       setSaving(false);
     }

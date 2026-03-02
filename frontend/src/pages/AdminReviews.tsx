@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import {
   Star,
   Eye,
@@ -134,7 +135,9 @@ const AdminReviews = () => {
       fetchReviews();
       fetchStats();
     } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to update review status");
+      toast.error(
+        error.response?.data?.message || "Failed to update review status",
+      );
     }
   };
 
@@ -154,7 +157,7 @@ const AdminReviews = () => {
       fetchReviews();
       fetchStats();
     } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to delete review");
+      toast.error(error.response?.data?.message || "Failed to delete review");
     }
   };
 

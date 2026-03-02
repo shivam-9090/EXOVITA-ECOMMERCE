@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import {
   Package,
   AlertTriangle,
@@ -114,7 +115,7 @@ const AdminInventory = () => {
       fetchInventoryData();
     } catch (error) {
       console.error("Failed to update stock:", error);
-      alert("Failed to update stock. Please try again.");
+      toast.error("Failed to update stock. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

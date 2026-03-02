@@ -10,6 +10,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import ScrollToTop from "./components/ScrollToTop";
 import SplashScreen from "./components/SplashScreen";
 import AdminAuthGate from "./admin/AdminAuthGate";
+import { Toaster } from "sonner";
 
 const AdminLayout = lazy(() => import("./components/AdminLayout"));
 const AdminLogin = lazy(() => import("./admin/AdminLogin"));
@@ -39,6 +40,7 @@ const AdminApp: React.FC = () => {
           <div className="app">
             <SplashScreen />
             <ScrollToTop />
+            <Toaster richColors position="top-right" />
             <main>
               <Suspense fallback={<PageLoader />}>
                 <Routes>

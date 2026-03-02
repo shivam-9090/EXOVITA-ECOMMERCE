@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 import axios from "axios";
 import {
   ArrowLeft,
@@ -113,7 +114,7 @@ const AdminProductForm: React.FC = () => {
       });
     } catch (error) {
       console.error("Error fetching product:", error);
-      alert("Failed to load product details");
+      toast.error("Failed to load product details");
     } finally {
       setLoading(false);
     }
@@ -204,7 +205,9 @@ const AdminProductForm: React.FC = () => {
       !formData.categoryId ||
       !formData.sku
     ) {
-      alert("Please fill in all required fields (Name, Price, Category, SKU)");
+      toast.error(
+        "Please fill in all required fields (Name, Price, Category, SKU)",
+      );
       return;
     }
 
@@ -213,7 +216,7 @@ const AdminProductForm: React.FC = () => {
       const token = localStorage.getItem("accessToken");
 
       if (!token) {
-        alert("You must be logged in to perform this action");
+        toast.error("You must be logged in to perform this action");
         navigate("/admin/login");
         return;
       }
@@ -243,16 +246,16 @@ const AdminProductForm: React.FC = () => {
 
       if (isEdit && id) {
         await axios.patch(`${API_URL}/products/${id}`, payload, { headers });
-        alert("Product updated successfully!");
+        toast.success("Product updated successfully!");
       } else {
         await axios.post(`${API_URL}/products`, payload, { headers });
-        alert("Product created successfully!");
+        toast.success("Product created successfully!");
       }
 
       navigate("/admin/products");
     } catch (error: any) {
       console.error("Error saving product:", error);
-      alert(error.response?.data?.message || "Failed to save product");
+      toast.error(error.response?.data?.message || "Failed to save product");
     } finally {
       setLoading(false);
     }

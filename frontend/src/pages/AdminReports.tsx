@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 import {
   BarChart3,
   Calendar,
@@ -138,7 +139,7 @@ const AdminReports: React.FC = () => {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error exporting report:", error);
-      alert("Failed to export report");
+      toast.error("Failed to export report");
     }
   };
 

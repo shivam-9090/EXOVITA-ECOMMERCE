@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
 import {
   Tag,
   Plus,
@@ -169,7 +170,7 @@ const AdminCoupons: React.FC = () => {
       fetchData();
       closeModal();
     } catch (error: any) {
-      alert(error.response?.data?.message || "Error saving coupon");
+      toast.error(error.response?.data?.message || "Error saving coupon");
     }
   };
 

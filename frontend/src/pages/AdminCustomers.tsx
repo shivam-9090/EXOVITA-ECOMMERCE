@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import {
   Users,
   Search,
@@ -154,7 +155,7 @@ const AdminCustomers = () => {
       fetchStats();
     } catch (error) {
       console.error("Failed to toggle user status:", error);
-      alert("Failed to update user status");
+      toast.error("Failed to update user status");
     }
   };
 

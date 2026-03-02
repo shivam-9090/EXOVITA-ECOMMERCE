@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import axios from "axios";
 import {
   Plus,
@@ -78,7 +79,7 @@ const AdminProducts: React.FC = () => {
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        alert("You must be logged in to perform this action");
+        toast.error("You must be logged in to perform this action");
         return;
       }
       await axios.delete(`${API_URL}/products/${id}`, {
@@ -87,7 +88,7 @@ const AdminProducts: React.FC = () => {
       fetchProducts();
     } catch (error) {
       console.error("Error deleting product:", error);
-      alert("Failed to delete product");
+      toast.error("Failed to delete product");
     }
   };
 

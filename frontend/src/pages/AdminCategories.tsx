@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import {
   Plus,
   Edit2,
@@ -93,7 +94,7 @@ const AdminCategories: React.FC = () => {
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        alert("You must be logged in");
+        toast.error("You must be logged in");
         return;
       }
 
@@ -121,7 +122,7 @@ const AdminCategories: React.FC = () => {
       fetchCategories();
     } catch (error: any) {
       console.error("Error saving category:", error);
-      alert(error.response?.data?.message || "Failed to save category");
+      toast.error(error.response?.data?.message || "Failed to save category");
     } finally {
       setSubmitting(false);
     }
@@ -141,7 +142,7 @@ const AdminCategories: React.FC = () => {
 
   const handleDelete = async (id: string, productCount: number = 0) => {
     if (productCount > 0) {
-      alert(
+      toast.error(
         "Cannot delete category with products. Please move or delete products first.",
       );
       return;
@@ -158,7 +159,7 @@ const AdminCategories: React.FC = () => {
       fetchCategories();
     } catch (error: any) {
       console.error("Error deleting category:", error);
-      alert(error.response?.data?.message || "Failed to delete category");
+      toast.error(error.response?.data?.message || "Failed to delete category");
     }
   };
 

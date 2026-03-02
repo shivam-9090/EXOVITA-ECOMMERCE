@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import {
   Package,
   Search,
@@ -200,7 +201,7 @@ const AdminOrders = () => {
       fetchStats(); // Status change affects stats
     } catch (error) {
       console.error("Failed to update status:", error);
-      alert("Failed to update status");
+      toast.error("Failed to update status");
     }
   };
 
@@ -212,13 +213,13 @@ const AdminOrders = () => {
         shipmentData,
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      alert("Shipment updated successfully");
+      toast.success("Shipment updated successfully");
 
       // We might need to refresh the selected order to see the changes properly if the backend returns the updated order
       // For now, simpler to just close or re-fetch active details if we had an endpoint for single order
     } catch (error) {
       console.error("Failed to update shipment:", error);
-      alert("Failed to update shipment");
+      toast.error("Failed to update shipment");
     }
   };
 
