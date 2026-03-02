@@ -18,7 +18,8 @@ dist-ssr/
 build/
 backend/dist/
 frontend/dist/
-admin-panel/
+admin-panel/admin-dist/
+admin-panel/node_modules/
 
 # Media assets (do not upload)
 *.png
