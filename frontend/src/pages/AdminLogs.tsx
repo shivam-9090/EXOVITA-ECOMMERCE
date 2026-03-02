@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { ADMIN_API_URL } from "../admin/apiBase";
 import {
   Activity,
   User,
@@ -105,7 +106,7 @@ const AdminLogs: React.FC = () => {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await axios.get(`http://localhost:3000/api/logs/stats`, {
+      const response = await axios.get(`${ADMIN_API_URL}/logs/stats`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { startDate, endDate },
       });
@@ -120,7 +121,7 @@ const AdminLogs: React.FC = () => {
       setLoading(true);
       const token = localStorage.getItem("accessToken");
       const response = await axios.get(
-        `http://localhost:3000/api/logs/admin-logs`,
+        `${ADMIN_API_URL}/logs/admin-logs`,
         {
           headers: { Authorization: `Bearer ${token}` },
           params: {
@@ -149,7 +150,7 @@ const AdminLogs: React.FC = () => {
       setLoading(true);
       const token = localStorage.getItem("accessToken");
       const response = await axios.get(
-        `http://localhost:3000/api/logs/login-history`,
+        `${ADMIN_API_URL}/logs/login-history`,
         {
           headers: { Authorization: `Bearer ${token}` },
           params: {

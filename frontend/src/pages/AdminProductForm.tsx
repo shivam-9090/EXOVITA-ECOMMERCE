@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import axios from "axios";
+import { ADMIN_API_URL } from "../admin/apiBase";
 import {
   ArrowLeft,
   Upload,
@@ -16,7 +17,7 @@ import {
   Tag,
 } from "lucide-react";
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = ADMIN_API_URL;
 
 interface Category {
   id: string;

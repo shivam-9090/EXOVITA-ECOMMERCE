@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import { ADMIN_API_URL } from "../admin/apiBase";
 import {
   Package,
   Search,
@@ -21,7 +22,7 @@ import {
   Loader2,
 } from "lucide-react";
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = ADMIN_API_URL;
 
 // --- Types ---
 interface Order {

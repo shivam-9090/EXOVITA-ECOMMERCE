@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ADMIN_API_URL } from "./apiBase";
 import "./AdminLogin.css";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const API_URL = ADMIN_API_URL;
 
 const AdminLogin: React.FC = () => {
   const navigate = useNavigate();

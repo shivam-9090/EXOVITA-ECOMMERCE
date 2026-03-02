@@ -49,7 +49,7 @@ services:
       ADMIN_FRONTEND_URL: ${ADMIN_FRONTEND_URL:-http://localhost:3002}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3001,http://localhost:3002}
       ADMIN_PANEL_EMAIL: ${ADMIN_PANEL_EMAIL:-admin@exovita.com}
-      ADMIN_PANEL_PASSWORD: ${ADMIN_PANEL_PASSWORD:-exovita@admin}
+      ADMIN_PANEL_PASSWORD: ${ADMIN_PANEL_PASSWORD}
       DATABASE_URL: postgresql://${POSTGRES_USER:-exovita}:${POSTGRES_PASSWORD:-exovita_password}@postgres:5432/${POSTGRES_DB:-exovita_db}?schema=public
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET}
@@ -72,6 +72,12 @@ services:
         condition: service_healthy
     networks:
       - exovita-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     command: sh -c "npx prisma migrate deploy && npm run start:prod"
 
   frontend:
@@ -86,7 +92,8 @@ services:
     ports:
       - "${FRONTEND_PORT:-3001}:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - exovita-network
 
@@ -95,13 +102,14 @@ services:
       context: ./frontend
       dockerfile: ../admin-panel/Dockerfile
       args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000/api}
+        VITE_API_URL: ${ADMIN_VITE_API_URL:-http://localhost:3000/api}
     container_name: exovita-admin
     restart: unless-stopped
     ports:
       - "${ADMIN_PORT:-3002}:3002"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - exovita-network
 

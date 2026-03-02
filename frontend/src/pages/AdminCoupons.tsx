@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { ADMIN_API_URL } from "../admin/apiBase";
 import {
   Tag,
   Plus,
@@ -73,7 +74,7 @@ const AdminCoupons: React.FC = () => {
       const headers = { Authorization: `Bearer ${token}` };
 
       const [couponsRes, statsRes] = await Promise.all([
-        axios.get(`http://localhost:3000/api/coupons/admin/all`, {
+        axios.get(`${ADMIN_API_URL}/coupons/admin/all`, {
           headers,
           params: {
             isActive:
@@ -81,7 +82,7 @@ const AdminCoupons: React.FC = () => {
             search: searchQuery || undefined,
           },
         }),
-        axios.get(`http://localhost:3000/api/coupons/admin/stats`, { headers }),
+        axios.get(`${ADMIN_API_URL}/coupons/admin/stats`, { headers }),
       ]);
 
       setCoupons(couponsRes.data.coupons);
@@ -157,12 +158,12 @@ const AdminCoupons: React.FC = () => {
 
       if (editingCoupon) {
         await axios.put(
-          `http://localhost:3000/api/coupons/admin/${editingCoupon.id}`,
+          `${ADMIN_API_URL}/coupons/admin/${editingCoupon.id}`,
           payload,
           { headers },
         );
       } else {
-        await axios.post(`http://localhost:3000/api/coupons/admin`, payload, {
+        await axios.post(`${ADMIN_API_URL}/coupons/admin`, payload, {
           headers,
         });
       }
@@ -179,7 +180,7 @@ const AdminCoupons: React.FC = () => {
 
     try {
       const token = localStorage.getItem("accessToken");
-      await axios.delete(`http://localhost:3000/api/coupons/admin/${id}`, {
+      await axios.delete(`${ADMIN_API_URL}/coupons/admin/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchData();
@@ -192,7 +193,7 @@ const AdminCoupons: React.FC = () => {
     try {
       const token = localStorage.getItem("accessToken");
       await axios.put(
-        `http://localhost:3000/api/coupons/admin/${coupon.id}`,
+        `${ADMIN_API_URL}/coupons/admin/${coupon.id}`,
         { isActive: !coupon.isActive },
         { headers: { Authorization: `Bearer ${token}` } },
       );

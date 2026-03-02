@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { ADMIN_API_URL } from "../admin/apiBase";
 import {
   Package,
   AlertTriangle,
@@ -63,14 +64,14 @@ const AdminInventory = () => {
       const token = localStorage.getItem("accessToken");
 
       const [statsRes, lowStockRes, outOfStockRes] = await Promise.all([
-        axios.get("http://localhost:3000/api/products/inventory/stats", {
+        axios.get(`${ADMIN_API_URL}/products/inventory/stats`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("http://localhost:3000/api/products/inventory/low-stock", {
+        axios.get(`${ADMIN_API_URL}/products/inventory/low-stock`, {
           headers: { Authorization: `Bearer ${token}` },
           params: { threshold: 10 },
         }),
-        axios.get("http://localhost:3000/api/products/inventory/out-of-stock", {
+        axios.get(`${ADMIN_API_URL}/products/inventory/out-of-stock`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -106,7 +107,7 @@ const AdminInventory = () => {
     try {
       const token = localStorage.getItem("accessToken");
       await axios.patch(
-        `http://localhost:3000/api/products/inventory/${selectedProduct.id}/stock`,
+        `${ADMIN_API_URL}/products/inventory/${selectedProduct.id}/stock`,
         { quantity: Number(stockQuantity), operation: stockOperation },
         { headers: { Authorization: `Bearer ${token}` } },
       );

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
+import { ADMIN_API_URL } from "./apiBase";
 
 interface AdminAuthGateProps {
   children: React.ReactElement;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const API_URL = ADMIN_API_URL;
 
 const AdminAuthGate: React.FC<AdminAuthGateProps> = ({ children }) => {
   const [checking, setChecking] = useState(true);

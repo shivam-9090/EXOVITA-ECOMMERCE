@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ADMIN_API_URL } from "../../admin/apiBase";
 
 interface AdminHeaderProps {
   toggleSidebar: () => void;
@@ -25,7 +26,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ toggleSidebar }) => {
     try {
       if (token) {
         await axios.post(
-          "http://localhost:3000/api/auth/logout",
+          `${ADMIN_API_URL}/auth/logout`,
           {},
           { headers: { Authorization: `Bearer ${token}` } },
         );

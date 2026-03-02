@@ -21,6 +21,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { ADMIN_API_URL } from "../admin/apiBase";
 
 interface OverviewStats {
   totalRevenue: number;
@@ -31,7 +32,7 @@ interface OverviewStats {
 
 type ReportTab = "sales" | "products" | "customers" | "tax";
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = ADMIN_API_URL;
 
 const AdminReports: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ReportTab>("sales");

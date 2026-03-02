@@ -23,8 +23,9 @@ import {
   Area,
 } from "recharts";
 import { Link } from "react-router-dom";
+import { ADMIN_API_URL } from "../admin/apiBase";
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = ADMIN_API_URL;
 
 interface DashboardStats {
   totalRevenue: number;
