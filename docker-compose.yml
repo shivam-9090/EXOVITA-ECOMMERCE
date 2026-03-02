@@ -46,8 +46,8 @@ services:
       NODE_ENV: ${NODE_ENV:-production}
       PORT: ${BACKEND_PORT:-3000}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3001}
-      ADMIN_FRONTEND_URL: ${ADMIN_FRONTEND_URL:-http://localhost:3001}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3001}
+      ADMIN_FRONTEND_URL: ${ADMIN_FRONTEND_URL:-http://localhost:3002}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3001,http://localhost:3002}
       ADMIN_PANEL_EMAIL: ${ADMIN_PANEL_EMAIL:-admin@exovita.com}
       ADMIN_PANEL_PASSWORD: ${ADMIN_PANEL_PASSWORD:-exovita@admin}
       DATABASE_URL: postgresql://${POSTGRES_USER:-exovita}:${POSTGRES_PASSWORD:-exovita_password}@postgres:5432/${POSTGRES_DB:-exovita_db}?schema=public
