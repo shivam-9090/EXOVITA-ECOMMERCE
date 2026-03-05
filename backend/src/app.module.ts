@@ -23,6 +23,7 @@ import { PagesModule } from "./pages/pages.module";
 import { LogsModule } from "./logs/logs.module";
 import { SettingsModule } from "./settings/settings.module";
 import { HealthController } from "./health.controller";
+import { EmailModule } from "./email/email.module";
 
 @Module({
   controllers: [HealthController],
@@ -58,6 +59,7 @@ import { HealthController } from "./health.controller";
     PagesModule,
     LogsModule,
     SettingsModule,
+    EmailModule,
   ],
   providers: [
     {

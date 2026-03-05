@@ -120,21 +120,18 @@ const AdminLogs: React.FC = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("accessToken");
-      const response = await axios.get(
-        `${ADMIN_API_URL}/logs/admin-logs`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          params: {
-            page: currentPage,
-            limit: 20,
-            action: actionFilter || undefined,
-            entity: entityFilter || undefined,
-            search: searchTerm || undefined,
-            startDate: startDate || undefined,
-            endDate: endDate || undefined,
-          },
+      const response = await axios.get(`${ADMIN_API_URL}/logs/admin-logs`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: {
+          page: currentPage,
+          limit: 20,
+          action: actionFilter || undefined,
+          entity: entityFilter || undefined,
+          search: searchTerm || undefined,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
         },
-      );
+      });
       setLogs(response.data.logs);
       setTotal(response.data.total);
       setTotalPages(response.data.pages);
@@ -149,20 +146,17 @@ const AdminLogs: React.FC = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("accessToken");
-      const response = await axios.get(
-        `${ADMIN_API_URL}/logs/login-history`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          params: {
-            page: currentPage,
-            limit: 20,
-            status: statusFilter || undefined,
-            search: searchTerm || undefined,
-            startDate: startDate || undefined,
-            endDate: endDate || undefined,
-          },
+      const response = await axios.get(`${ADMIN_API_URL}/logs/login-history`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: {
+          page: currentPage,
+          limit: 20,
+          status: statusFilter || undefined,
+          search: searchTerm || undefined,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
         },
-      );
+      });
       setLoginHistory(response.data.history);
       setTotal(response.data.total);
       setTotalPages(response.data.pages);

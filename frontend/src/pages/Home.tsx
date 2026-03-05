@@ -7,9 +7,6 @@ const HeroSection = lazy(() => import("../components/HeroSection"));
 const NaturalLuxurySection = lazy(
   () => import("../components/NaturalLuxurySection"),
 );
-const BotanicalBlueprintSection = lazy(
-  () => import("../components/BotanicalBlueprintSection"),
-);
 const WhyChooseExovita = lazy(() => import("../components/WhyChooseExovita"));
 const Transformation = lazy(() => import("../components/Transformation"));
 const ReviewSection = lazy(() => import("../components/ReviewSection"));
@@ -29,15 +26,11 @@ const Home: React.FC = () => {
         </AnimatedSection>
 
         <AnimatedSection animation="fade-up" threshold={0.1}>
-          <BotanicalBlueprintSection />
+          <Transformation />
         </AnimatedSection>
 
         <AnimatedSection animation="fade-up" threshold={0.1}>
           <WhyChooseExovita />
-        </AnimatedSection>
-
-        <AnimatedSection animation="fade-up" threshold={0.1}>
-          <Transformation />
         </AnimatedSection>
 
         <AnimatedSection animation="fade-up" threshold={0.1}>

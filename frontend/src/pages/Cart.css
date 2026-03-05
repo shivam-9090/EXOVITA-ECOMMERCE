@@ -170,10 +170,15 @@
 }
 
 .checkout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
   background-color: #1a1a1a;
   color: white;
   border: none;
+  text-decoration: none;
   padding: 1rem;
   border-radius: 99px;
   font-weight: 600;

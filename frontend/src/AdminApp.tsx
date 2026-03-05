@@ -29,6 +29,7 @@ const AdminCMS = lazy(() => import("./pages/AdminCMS"));
 const AdminRoles = lazy(() => import("./pages/AdminRoles"));
 const AdminLogs = lazy(() => import("./pages/AdminLogs"));
 const AdminSettings = lazy(() => import("./pages/AdminSettings"));
+const AdminNotifications = lazy(() => import("./pages/AdminNotifications"));
 
 const PageLoader = () => null;
 
@@ -76,6 +77,10 @@ const AdminApp: React.FC = () => {
                     <Route path="roles" element={<AdminRoles />} />
                     <Route path="logs" element={<AdminLogs />} />
                     <Route path="settings" element={<AdminSettings />} />
+                    <Route
+                      path="notifications"
+                      element={<AdminNotifications />}
+                    />
                   </Route>
                   <Route
                     path="*"

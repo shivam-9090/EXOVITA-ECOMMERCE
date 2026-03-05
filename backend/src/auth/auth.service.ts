@@ -1,19 +1,38 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+  ConflictException,
+} from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import * as bcrypt from "bcrypt";
 
 import { UsersService } from "../users/users.service";
 import { LogsService } from "../logs/logs.service";
+import { EmailService } from "../email/email.service";
 import { RegisterDto } from "./dto/register.dto";
+
+interface PendingRegistration {
+  name: string;
+  email: string;
+  hashedPassword: string;
+  phone?: string;
+  otp: string;
+  expiresAt: Date;
+}
 
 @Injectable()
 export class AuthService {
+  // In-memory OTP store — keyed by email
+  private pendingRegistrations = new Map<string, PendingRegistration>();
+
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
     private logsService: LogsService,
+    private emailService: EmailService,
   ) {}
 
   async validateUser(
@@ -169,5 +188,78 @@ export class AuthService {
     }
     const { password, refreshToken, ...userProfile } = user;
     return userProfile;
+  }
+
+  // ─── OTP Registration Flow ────────────────────────────────────────────────
+
+  async sendRegistrationOTP(dto: RegisterDto): Promise<{ message: string }> {
+    const existing = await this.usersService.findByEmail(dto.email);
+    if (existing) {
+      throw new ConflictException("An account with this email already exists");
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
+    const nameParts = dto.name.trim().split(" ");
+    const firstName = nameParts[0];
+
+    this.pendingRegistrations.set(dto.email.toLowerCase(), {
+      name: dto.name,
+      email: dto.email.toLowerCase(),
+      hashedPassword,
+      phone: dto.phone,
+      otp,
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 min
+    });
+
+    await this.emailService.sendOTP(dto.email, firstName, otp);
+
+    return { message: "OTP sent to your email" };
+  }
+
+  async verifyRegistrationOTP(email: string, otp: string, requestInfo?: any) {
+    const pending = this.pendingRegistrations.get(email.toLowerCase());
+
+    if (!pending) {
+      throw new BadRequestException(
+        "No pending registration found. Please request a new OTP.",
+      );
+    }
+
+    if (new Date() > pending.expiresAt) {
+      this.pendingRegistrations.delete(email.toLowerCase());
+      throw new BadRequestException("OTP has expired. Please register again.");
+    }
+
+    if (pending.otp !== otp.trim()) {
+      throw new BadRequestException("Invalid OTP. Please try again.");
+    }
+
+    // OTP valid — create user
+    this.pendingRegistrations.delete(email.toLowerCase());
+
+    const nameParts = pending.name.trim().split(" ");
+    const firstName = nameParts[0];
+    const lastName = nameParts.slice(1).join(" ") || firstName;
+
+    const user = await this.usersService.create({
+      email: pending.email,
+      password: pending.hashedPassword,
+      firstName,
+      lastName,
+      phone: pending.phone,
+    });
+
+    if (requestInfo) {
+      await this.logsService.createLoginHistory({
+        userId: user.id,
+        email: user.email,
+        status: "SUCCESS",
+        ipAddress: requestInfo.ipAddress,
+        userAgent: requestInfo.userAgent,
+      });
+    }
+
+    return this.login(user, requestInfo);
   }
 }

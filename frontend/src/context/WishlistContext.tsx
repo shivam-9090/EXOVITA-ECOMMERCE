@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import { useAuth } from "./AuthContext";
+import { STORE_API_URL } from "../apiBase";
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = STORE_API_URL;
 
 export interface WishlistItem {
   id: string;
@@ -80,7 +82,7 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addToWishlist = async (product: any) => {
     if (!user) {
-      alert("Please log in to add items to wishlist");
+      toast.error("Please log in to add items to wishlist");
       return;
     }
 
@@ -90,7 +92,7 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({
       await fetchWishlist();
     } catch (error: any) {
       console.error("Error adding to wishlist:", error);
-      alert(error.response?.data?.message || "Failed to add to wishlist");
+      toast.error(error.response?.data?.message || "Failed to add to wishlist");
     } finally {
       setLoading(false);
     }

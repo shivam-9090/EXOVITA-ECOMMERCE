@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import { useAuth } from "./AuthContext";
+import { STORE_API_URL } from "../apiBase";
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = STORE_API_URL;
 
 export interface CartItem {
   id: string;
@@ -89,7 +91,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addToCart = async (product: any, couponId?: string) => {
     if (!user) {
-      alert("Please log in to add items to cart");
+      toast.error("Please log in to add items to cart");
       return;
     }
 
@@ -103,7 +105,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
       await fetchCart();
     } catch (error: any) {
       console.error("Error adding to cart:", error);
-      alert(error.response?.data?.message || "Failed to add to cart");
+      toast.error(error.response?.data?.message || "Failed to add to cart");
     } finally {
       setLoading(false);
     }

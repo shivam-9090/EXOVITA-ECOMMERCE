@@ -1,7 +1,7 @@
-import React, { useRef, useState, useEffect } from 'react';
-import './Transformation.css';
-import beforeImg from '../assets/hair/before.jpeg';
-import afterImg from '../assets/hair/after.jpeg';
+import React, { useRef, useState, useEffect } from "react";
+import "./Transformation.css";
+import beforeImg from "../assets/hair/before.jpeg";
+import afterImg from "../assets/hair/after.jpeg";
 
 const Transformation: React.FC = () => {
   const [sliderPosition, setSliderPosition] = useState(50);
@@ -41,17 +41,17 @@ const Transformation: React.FC = () => {
     const handleGlobalMouseUp = () => {
       isDragging.current = false;
     };
-    window.addEventListener('mouseup', handleGlobalMouseUp);
-    return () => window.removeEventListener('mouseup', handleGlobalMouseUp);
+    window.addEventListener("mouseup", handleGlobalMouseUp);
+    return () => window.removeEventListener("mouseup", handleGlobalMouseUp);
   }, []);
 
   return (
     <section className="comparison-section">
       <p className="comparison-subtitle">Real Results with Our Hair Oil</p>
       <h3 className="comparison-title">Transformation</h3>
-      
+
       {/* Interactive Slider Full Width */}
-      <div 
+      <div
         className="slider-container"
         ref={sliderRef}
         onMouseMove={handleMouseMove}
@@ -62,11 +62,15 @@ const Transformation: React.FC = () => {
         <div className="slider-frame">
           {/* After Image (Background) */}
           <div className="slider-image-wrapper">
-            <img src={afterImg} alt="After using hair oil" className="slider-image" />
+            <img
+              src={afterImg}
+              alt="After using hair oil"
+              className="slider-image"
+            />
           </div>
-          
+
           {/* After Label with clip */}
-          <div 
+          <div
             className="after-label-wrapper"
             style={{ clipPath: `inset(0 0 0 ${sliderPosition}%)` }}
           >
@@ -74,16 +78,20 @@ const Transformation: React.FC = () => {
           </div>
 
           {/* Before Image (Overlay with clip) */}
-          <div 
+          <div
             className="slider-image-wrapper slider-overlay"
             style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
           >
-            <img src={beforeImg} alt="Before using hair oil" className="slider-image" />
+            <img
+              src={beforeImg}
+              alt="Before using hair oil"
+              className="slider-image"
+            />
             <div className="image-label before-label">BEFORE</div>
           </div>
 
           {/* Draggable Slider Line */}
-          <div 
+          <div
             className="slider-line"
             style={{ left: `${sliderPosition}%` }}
             onMouseDown={handleMouseDown}
@@ -96,6 +104,10 @@ const Transformation: React.FC = () => {
           </div>
         </div>
       </div>
+      <p className="transformation-caption">
+        This transformation is after using our product consistently for 3
+        months.
+      </p>
     </section>
   );
 };

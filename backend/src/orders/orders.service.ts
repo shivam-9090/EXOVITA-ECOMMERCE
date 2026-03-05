@@ -2,13 +2,88 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Logger,
 } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { OrderStatus, PaymentMethod } from "@prisma/client";
+import { ShiprocketService } from "../shipping/shiprocket.service";
+import { EmailService, OrderEmailData } from "../email/email.service";
 
 @Injectable()
 export class OrdersService {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(OrdersService.name);
+  constructor(
+    private prisma: PrismaService,
+    private shiprocket: ShiprocketService,
+    private email: EmailService,
+  ) {}
+
+  // ─── Email helpers ───────────────────────────────────────────────────────────
+
+  private buildEmailData(order: any): OrderEmailData {
+    return {
+      orderNumber: order.orderNumber,
+      customerName:
+        order.address?.fullName ||
+        `${order.user?.firstName || ""} ${order.user?.lastName || ""}`.trim() ||
+        "Customer",
+      customerEmail: order.user?.email || "",
+      phone: order.address?.phone || order.user?.phone || undefined,
+      items: (order.items || []).map((i: any) => ({
+        name: i.product?.name || "Product",
+        quantity: i.quantity,
+        price: i.price,
+        total: i.total,
+      })),
+      subtotal: order.subtotal,
+      tax: order.tax,
+      shippingCost: order.shippingCost,
+      total: order.total,
+      paymentMethod: order.payment?.method || "COD",
+      address: {
+        street: order.address?.addressLine1 || order.address?.street || "",
+        city: order.address?.city || "",
+        state: order.address?.state || "",
+        zipCode: order.address?.postalCode || order.address?.zipCode || "",
+        country: order.address?.country || "India",
+      },
+      createdAt: order.createdAt,
+      awbCode: order.shipment?.awbCode || undefined,
+      courierName: order.shipment?.courierName || undefined,
+    };
+  }
+
+  private async sendOrderEmail(
+    orderId: string,
+    type: "confirmation" | "invoice" | "shipped" | "delivered",
+  ): Promise<void> {
+    try {
+      const order = await this.prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          user: { select: { email: true, firstName: true, lastName: true } },
+          items: { include: { product: { select: { name: true } } } },
+          address: true,
+          payment: true,
+          shipment: true,
+        },
+      });
+      if (!order?.user?.email) return;
+      const data = this.buildEmailData(order);
+      if (type === "confirmation") await this.email.sendOrderConfirmation(data);
+      else if (type === "invoice") await this.email.sendInvoice(data);
+      else if (type === "shipped")
+        await this.email.sendShippedNotification(data);
+      else if (type === "delivered") {
+        await this.email.sendDeliveredNotification(data);
+        if (order.payment?.method === "COD") await this.email.sendInvoice(data);
+      }
+    } catch (err) {
+      this.logger.error(
+        `Email (${type}) failed for ${orderId}: ${err.message}`,
+      );
+    }
+  }
 
   // Create new order from cart
   async createOrder(userId: string, createOrderDto: any) {
@@ -129,13 +204,14 @@ export class OrdersService {
       });
 
       // Create payment record
+      // COD stays PENDING until order is DELIVERED and cash is actually collected
       await tx.payment.create({
         data: {
           orderId: newOrder.id,
           amount: total,
           currency: "INR",
           method: paymentMethod,
-          status: paymentMethod === "COD" ? "COMPLETED" : "PENDING",
+          status: "PENDING",
         },
       });
 
@@ -187,6 +263,9 @@ export class OrdersService {
 
       return newOrder;
     });
+
+    // Fire order confirmation email (async, non-blocking)
+    this.sendOrderEmail(order.id, "confirmation").catch(() => {});
 
     return {
       success: true,
@@ -259,6 +338,12 @@ export class OrdersService {
   async cancelOrder(userId: string, orderId: string) {
     const order = await this.prisma.order.findFirst({
       where: { id: orderId, userId },
+      include: {
+        user: { select: { email: true, firstName: true, lastName: true } },
+        address: true,
+        payment: true,
+        items: { include: { product: { select: { name: true } } } },
+      },
     });
 
     if (!order) {
@@ -298,6 +383,47 @@ export class OrdersService {
 
       return updated;
     });
+
+    // Send cancellation email (don't await — fire & forget)
+    const customerEmail = order.user?.email;
+    if (customerEmail) {
+      const isOnlinePayment =
+        !!order.payment && order.payment.method !== PaymentMethod.COD;
+
+      const emailData = {
+        orderNumber: order.orderNumber,
+        customerName:
+          order.address?.fullName ||
+          `${order.user?.firstName || ""} ${order.user?.lastName || ""}`.trim() ||
+          "Customer",
+        customerEmail,
+        items: order.items.map((i: any) => ({
+          name: i.product?.name || "Product",
+          quantity: i.quantity,
+          price: Number(i.price),
+          total: Number(i.price) * i.quantity,
+        })),
+        subtotal: Number(order.subtotal ?? order.total),
+        tax: Number(order.tax ?? 0),
+        shippingCost: Number(order.shippingCost ?? 0),
+        total: Number(order.total),
+        paymentMethod: order.payment?.method || "COD",
+        address: {
+          street: order.address?.addressLine1 || "",
+          city: order.address?.city || "",
+          state: order.address?.state || "",
+          zipCode: order.address?.postalCode || "",
+          country: order.address?.country || "India",
+        },
+        createdAt: order.createdAt,
+      };
+
+      this.email
+        .sendCancellationEmail(emailData, isOnlinePayment)
+        .catch((err) =>
+          this.logger.error(`Cancellation email failed: ${err.message}`),
+        );
+    }
 
     return {
       success: true,
@@ -443,6 +569,72 @@ export class OrdersService {
         where: { orderId },
         data: { shippedAt: new Date() },
       });
+      this.sendOrderEmail(orderId, "shipped").catch(() => {});
+    }
+
+    // If status is CONFIRMED → auto-push order to Shiprocket
+    if (status === OrderStatus.CONFIRMED && this.shiprocket.isConfigured) {
+      const fullOrder = await this.prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+              phone: true,
+            },
+          },
+          items: { include: { product: true } },
+          address: true,
+          payment: true,
+          shipment: true,
+        },
+      });
+      if (fullOrder && !fullOrder.shipment?.shiprocketOrderId) {
+        try {
+          const srRes = await this.shiprocket.createOrder(fullOrder as any);
+          await this.prisma.shipment.update({
+            where: { orderId },
+            data: {
+              shiprocketOrderId: String(srRes.order_id),
+              shiprocketShipmentId: String(srRes.shipment_id),
+              awbCode: srRes.awb_code || null,
+              courierName: srRes.courier_name || null,
+              shiprocketStatus: srRes.status || null,
+              carrier: srRes.courier_name || null,
+              trackingNumber: srRes.awb_code || null,
+            },
+          });
+          this.logger.log(
+            `Shiprocket order pushed for ${orderId}: awb=${srRes.awb_code}`,
+          );
+        } catch (err) {
+          // Non-fatal — log but don't block the status update
+          this.logger.error(
+            `Shiprocket push failed for ${orderId}: ${err.message}`,
+          );
+        }
+      }
+    }
+
+    // If status is CANCELLED → cancel on Shiprocket
+    if (status === OrderStatus.CANCELLED && this.shiprocket.isConfigured) {
+      const shipment = await this.prisma.shipment.findUnique({
+        where: { orderId },
+      });
+      if (shipment?.shiprocketOrderId) {
+        try {
+          await this.shiprocket.cancelOrder([
+            Number(shipment.shiprocketOrderId),
+          ]);
+        } catch (err) {
+          this.logger.error(
+            `Shiprocket cancel failed for ${orderId}: ${err.message}`,
+          );
+        }
+      }
     }
 
     // If status is DELIVERED, update shipment deliveredAt
@@ -457,6 +649,7 @@ export class OrdersService {
         where: { orderId, method: "COD" },
         data: { status: "COMPLETED", paidAt: new Date() },
       });
+      this.sendOrderEmail(orderId, "delivered").catch(() => {});
     }
 
     return {
@@ -604,6 +797,84 @@ export class OrdersService {
     return {
       csv: csvRows.join("\n"),
       filename: `orders-${new Date().toISOString().split("T")[0]}.csv`,
+    };
+  }
+
+  // Public: Track order by order number (no auth required)
+  async trackOrderPublic(orderNumber: string) {
+    const order = await this.prisma.order.findFirst({
+      where: { orderNumber },
+      include: {
+        shipment: true,
+        items: {
+          include: {
+            product: { select: { name: true, thumbnail: true } },
+          },
+        },
+      },
+    });
+
+    if (!order) {
+      throw new NotFoundException("Order not found");
+    }
+
+    let liveTracking: any = null;
+
+    // Fetch live tracking from Shiprocket if AWB available
+    if (order.shipment?.awbCode && this.shiprocket.isConfigured) {
+      try {
+        const srData = await this.shiprocket.trackByAWB(order.shipment.awbCode);
+        const td = srData?.tracking_data;
+        if (td) {
+          liveTracking = {
+            currentStatus: td.current_status,
+            courierName: td.courier_name,
+            awb: td.awb_code,
+            etd: td.etd,
+            activities: (td.shipment_track_activities || [])
+              .slice(0, 10)
+              .map((a: any) => ({
+                date: a.date,
+                activity: a.activity,
+                location: a.location,
+              })),
+          };
+          // Update shiprocketStatus in DB
+          await this.prisma.shipment.update({
+            where: { orderId: order.id },
+            data: { shiprocketStatus: td.current_status },
+          });
+        }
+      } catch (err) {
+        this.logger.warn(
+          `Live tracking fetch failed for ${orderNumber}: ${err.message}`,
+        );
+      }
+    }
+
+    return {
+      orderNumber: order.orderNumber,
+      status: order.status,
+      createdAt: order.createdAt,
+      items: order.items.map((i) => ({
+        name: i.product.name,
+        thumbnail: i.product.thumbnail,
+        quantity: i.quantity,
+        price: i.price,
+      })),
+      shipment: order.shipment
+        ? {
+            carrier: order.shipment.courierName || order.shipment.carrier,
+            awbCode: order.shipment.awbCode,
+            trackingNumber: order.shipment.trackingNumber,
+            trackingUrl: order.shipment.trackingUrl,
+            shippedAt: order.shipment.shippedAt,
+            deliveredAt: order.shipment.deliveredAt,
+            estimatedDelivery: order.shipment.estimatedDelivery,
+            shiprocketStatus: order.shipment.shiprocketStatus,
+          }
+        : null,
+      liveTracking,
     };
   }
 }

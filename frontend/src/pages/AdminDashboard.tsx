@@ -266,7 +266,7 @@ const AdminDashboard: React.FC = () => {
                   axisLine={false}
                   tickLine={false}
                   tick={{ fill: "#555555", fontSize: 12, fontWeight: 500 }}
-                  tickFormatter={(value) => `₹${value / 1000}k`}
+                  tickFormatter={(value: number) => `₹${value / 1000}k`}
                 />
                 <Tooltip
                   contentStyle={{

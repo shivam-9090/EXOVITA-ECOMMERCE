@@ -1,26 +1,35 @@
-import React from 'react';
-import { ShoppingBag, Star, Heart } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import { useWishlist } from '../context/WishlistContext';
-import './ProductCard.css';
+import React from "react";
+import { ShoppingBag, Star, Heart } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
+import "./ProductCard.css";
 
 interface ProductCardProps {
-  id: number;
+  id: string | number;
   title: string;
   price: number;
   image: string;
-  images?: string[]; 
+  images?: string[];
   category: string;
   description?: string;
   showDetails?: boolean;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ id, title, price, image, category, description, showDetails }) => {
+const ProductCard: React.FC<ProductCardProps> = ({
+  id,
+  title,
+  price,
+  image,
+  category,
+  description,
+  showDetails,
+}) => {
   const { addToCart } = useCart();
   const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const wishlistProductId = String(id);
 
-  const inWishlist = isInWishlist(id);
+  const inWishlist = isInWishlist(wishlistProductId);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -32,7 +41,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, title, price, image, cate
     e.preventDefault();
     e.stopPropagation();
     if (inWishlist) {
-      removeFromWishlist(id);
+      removeFromWishlist(wishlistProductId);
     } else {
       addToWishlist({ id, title, price, image, category });
     }
@@ -43,12 +52,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, title, price, image, cate
       <div className="product-card">
         <div className="product-image-container">
           <img src={image} alt={title} className="product-image" />
-          
-          <div className={`wishlist-btn ${inWishlist ? 'active' : ''}`} onClick={handleWishlistToggle} role="button">
-            <Heart size={18} fill={inWishlist ? "#e53935" : "none"} color={inWishlist ? "#e53935" : "#666"} />
+
+          <div
+            className={`wishlist-btn ${inWishlist ? "active" : ""}`}
+            onClick={handleWishlistToggle}
+            role="button"
+          >
+            <Heart
+              size={18}
+              fill={inWishlist ? "#e53935" : "none"}
+              color={inWishlist ? "#e53935" : "#666"}
+            />
           </div>
 
-          <div className="add-to-cart-btn" onClick={handleAddToCart} role="button">
+          <div
+            className="add-to-cart-btn"
+            onClick={handleAddToCart}
+            role="button"
+          >
             <ShoppingBag size={18} />
             Add
           </div>

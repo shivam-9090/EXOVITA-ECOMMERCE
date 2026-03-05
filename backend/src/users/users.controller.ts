@@ -2,6 +2,8 @@ import {
   Controller,
   Get,
   Patch,
+  Post,
+  Delete,
   Body,
   Param,
   Query,
@@ -76,5 +78,25 @@ export class UsersController {
   @Patch("me")
   updateProfile(@Request() req, @Body() updateData: any) {
     return this.usersService.update(req.user.userId, updateData);
+  }
+
+  @Get("me/addresses")
+  getMyAddresses(@Request() req) {
+    return this.usersService.getUserAddresses(req.user.userId);
+  }
+
+  @Post("me/addresses")
+  createMyAddress(@Request() req, @Body() body: any) {
+    return this.usersService.createUserAddress(req.user.userId, body);
+  }
+
+  @Patch("me/addresses/:id")
+  updateMyAddress(@Request() req, @Param("id") id: string, @Body() body: any) {
+    return this.usersService.updateUserAddress(req.user.userId, id, body);
+  }
+
+  @Delete("me/addresses/:id")
+  deleteMyAddress(@Request() req, @Param("id") id: string) {
+    return this.usersService.deleteUserAddress(req.user.userId, id);
   }
 }

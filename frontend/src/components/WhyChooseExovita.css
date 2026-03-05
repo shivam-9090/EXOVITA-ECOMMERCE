@@ -23,12 +23,12 @@
 }
 
 .why-choose-title {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 3rem;
   line-height: 1.2;
   color: var(--color-primary-dark);
   margin: 0;
-  max-width: 100%; 
+  max-width: 100%;
 }
 
 .why-choose-visual {
@@ -39,7 +39,7 @@
   position: relative;
   /* Removed fixed height constraint on container to let wrapper dictate, 
      but added padding for the offset frame */
-  padding: 20px; 
+  padding: 20px;
 }
 
 .why-choose-img-wrapper {
@@ -56,7 +56,7 @@
   object-fit: cover;
   border-radius: 8px 8px 0 0; /* Asymmetric rounding for interest or standard: */
   border-radius: 8px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
   display: block;
   position: relative;
   z-index: 2;
@@ -64,7 +64,7 @@
 
 /* --- THE FRAME DESIGN --- */
 .why-choose-img-wrapper::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 20px;
   left: 20px;
@@ -79,7 +79,7 @@
 
 /* Optional: Additional floral accent or second line */
 .why-choose-img-wrapper::after {
-  content: '';
+  content: "";
   position: absolute;
   top: -10px;
   left: -10px;
@@ -100,10 +100,13 @@
 
 .why-choose-feature {
   text-align: left;
+  border: 2px solid #000;
+  padding: 2rem;
+  border-radius: 8px;
 }
 
 .why-choose-feature-title {
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 1.25rem;
   font-weight: 700; /* Bold title as requested */
   color: var(--color-secondary);
@@ -111,7 +114,7 @@
 }
 
 .why-choose-feature-desc {
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 1rem;
   color: var(--color-text-light);
   line-height: 1.6;
@@ -123,7 +126,7 @@
     max-width: 95%;
     padding: 0 1rem;
   }
-  
+
   .why-choose-top {
     gap: 2rem;
   }
@@ -133,14 +136,14 @@
   .why-choose-section {
     padding: 3rem 1rem;
   }
-  
+
   .why-choose-top {
-    flex-direction: column; 
+    flex-direction: column;
     text-align: left;
     gap: 2rem;
     margin-bottom: 3rem;
   }
-  
+
   .why-choose-header {
     text-align: center;
     width: 100%;
@@ -157,7 +160,7 @@
     width: 100%;
     padding: 10px;
   }
-  
+
   .why-choose-bottom {
     grid-template-columns: 1fr;
     gap: 2rem;
@@ -168,23 +171,27 @@
   .why-choose-section {
     padding: 2rem 0.75rem;
   }
-  
+
   .why-choose-title {
     font-size: 1.8rem;
   }
-  
+
   .why-choose-img {
     height: 280px;
   }
-  
+
+  .why-choose-feature {
+    padding: 1.5rem;
+  }
+
   .why-choose-feature-title {
     font-size: 1.1rem;
   }
-  
+
   .why-choose-feature-desc {
     font-size: 0.95rem;
   }
-  
+
   .why-choose-bottom {
     gap: 1.5rem;
   }
@@ -194,16 +201,16 @@
   .why-choose-title {
     font-size: 1.5rem;
   }
-  
+
   .why-choose-img {
     height: 240px;
   }
-  
+
   .why-choose-img-wrapper::before {
     top: 10px;
     left: 10px;
   }
-  
+
   .why-choose-img-wrapper::after {
     width: 40px;
     height: 40px;

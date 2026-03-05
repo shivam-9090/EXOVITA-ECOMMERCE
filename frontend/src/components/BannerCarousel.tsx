@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
+import { STORE_API_URL } from "../apiBase";
 import "./BannerCarousel.css";
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = STORE_API_URL;
 
 interface Banner {
   id: number;

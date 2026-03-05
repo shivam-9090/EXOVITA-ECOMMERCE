@@ -1,13 +1,9 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import type { ReactNode } from "react";
 import axios from "axios";
+import { STORE_API_URL } from "../apiBase";
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = STORE_API_URL;
 
 interface User {
   id: string;
@@ -88,16 +84,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const bootstrapAuth = async () => {
       const token = localStorage.getItem("accessToken");
-      const refreshToken = localStorage.getItem("refreshToken");
+      const storedRefreshToken = localStorage.getItem("refreshToken");
 
       try {
         if (token) {
           axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-          await loadUser();
+          try {
+            await loadUser();
+            return;
+          } catch {
+            // Access token may be expired — try refresh before giving up
+            if (storedRefreshToken) {
+              try {
+                await refreshSession();
+                await loadUser();
+                return;
+              } catch {
+                clearAuthState();
+              }
+            } else {
+              clearAuthState();
+            }
+          }
           return;
         }
 
-        if (refreshToken) {
+        if (storedRefreshToken) {
           await refreshSession();
           await loadUser();
           return;

@@ -9,14 +9,48 @@ import {
   Query,
   UseGuards,
   Patch,
+  BadRequestException,
 } from "@nestjs/common";
 import { PagesService } from "./pages.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { AdminGuard } from "../auth/guards/admin.guard";
+import { EmailService } from "../email/email.service";
 
 @Controller("pages")
 export class PagesController {
-  constructor(private pagesService: PagesService) {}
+  constructor(
+    private pagesService: PagesService,
+    private email: EmailService,
+  ) {}
+
+  // PUBLIC: Contact form submission
+  @Post("contact")
+  async submitContact(
+    @Body()
+    body: {
+      name: string;
+      email: string;
+      subject: string;
+      message: string;
+    },
+  ) {
+    const { name, email, subject, message } = body;
+    if (
+      !name?.trim() ||
+      !email?.trim() ||
+      !subject?.trim() ||
+      !message?.trim()
+    ) {
+      throw new BadRequestException("All fields are required");
+    }
+    await this.email.sendContactEmail({
+      name: name.trim(),
+      email: email.trim(),
+      subject: subject.trim(),
+      message: message.trim(),
+    });
+    return { success: true, message: "Message sent successfully" };
+  }
 
   // PUBLIC: Get page by slug
   @Get("slug/:slug")

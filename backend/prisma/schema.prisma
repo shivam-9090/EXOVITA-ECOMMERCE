@@ -290,17 +290,25 @@ model Shipment {
   id              String    @id @default(uuid())
   orderId         String    @unique
   order           Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  
+
+  // Manual / override fields
   carrier         String?
   trackingNumber  String?
   trackingUrl     String?
-  
-  shippedAt       DateTime?
-  deliveredAt     DateTime?
+
+  // Shiprocket auto-fill fields
+  shiprocketOrderId    String?
+  shiprocketShipmentId String?
+  awbCode              String?
+  courierName          String?
+  shiprocketStatus     String?
+
+  shippedAt         DateTime?
+  deliveredAt       DateTime?
   estimatedDelivery DateTime?
-  
+
   notes           String?
-  
+
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 

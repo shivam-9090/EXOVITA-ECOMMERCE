@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import axios from "axios";
 import ProductCard from "../components/ProductCard";
+import { STORE_API_URL } from "../apiBase";
 import "./Shop.css";
 import {
   ChevronDown,
@@ -9,6 +10,9 @@ import {
   Heart,
   Truck,
   ShieldCheck,
+  Tag,
+  XCircle,
+  CheckCircle,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import BotanicalBlueprintSection from "../components/BotanicalBlueprintSection";
@@ -22,7 +26,7 @@ import hairOil1 from "../assets/hair oil/hair_oil_1.jpg";
 import hairOil2 from "../assets/hair oil/hair_oil_2.png";
 import hairOil3 from "../assets/hair oil/hair_oil_3.png";
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = STORE_API_URL;
 
 const SORT_OPTIONS = [
   { label: "Recommended", value: "recommended" },
@@ -48,6 +52,16 @@ const Shop: React.FC = () => {
   const [descriptionOpen, setDescriptionOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [ingredientsOpen, setIngredientsOpen] = useState(false);
+
+  // Hair Oil product from DB
+  const [hairOilProduct, setHairOilProduct] = useState<any>(null);
+
+  // Coupon states for Hair Oil PDP
+  const [couponCode, setCouponCode] = useState("");
+  const [couponApplied, setCouponApplied] = useState<any>(null);
+  const [couponError, setCouponError] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [finalPrice, setFinalPrice] = useState(350);
 
   useEffect(() => {
     fetchProducts();
@@ -116,6 +130,70 @@ const Shop: React.FC = () => {
       setCategories(["Hair Oil"]); // Fallback to Hair Oil only
       setSelectedCategory("Hair Oil");
     }
+  };
+
+  // Derive Hair Oil product from fetched products and sync finalPrice
+  useEffect(() => {
+    const found = products.find((p) => p.category?.name === "Hair Oil");
+    if (found) {
+      setHairOilProduct(found);
+      if (!couponApplied) {
+        setFinalPrice(found.price);
+      }
+    }
+  }, [products]);
+
+  const applyCoupon = async () => {
+    if (!couponCode.trim()) {
+      setCouponError("Please enter a coupon code");
+      return;
+    }
+    if (!hairOilProduct) return;
+
+    setCouponLoading(true);
+    setCouponError("");
+    setCouponApplied(null);
+
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        setCouponError("Please login to apply coupons");
+        setCouponLoading(false);
+        return;
+      }
+
+      const response = await axios.post(
+        `${API_URL}/coupons/apply`,
+        {
+          code: couponCode,
+          totalAmount: hairOilProduct.price,
+          productIds: [hairOilProduct.id],
+          categoryIds: hairOilProduct.categoryId
+            ? [hairOilProduct.categoryId]
+            : [],
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      setCouponApplied(response.data);
+      setFinalPrice(response.data.finalAmount);
+      setCouponError("");
+    } catch (error: any) {
+      setCouponError(error.response?.data?.message || "Invalid coupon code");
+      setCouponApplied(null);
+      setFinalPrice(hairOilProduct.price);
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setCouponCode("");
+    setCouponApplied(null);
+    setCouponError("");
+    setFinalPrice(hairOilProduct?.price || 350);
   };
 
   const filteredProducts = useMemo(() => {
@@ -347,7 +425,41 @@ const Shop: React.FC = () => {
                     EXOVITA Hair Oil- The Heritage Collection 50ml
                   </h1>
 
-                  <div className="pdp-price-detail">Rs. 1,300.00 INR</div>
+                  <div className="pdp-price-detail">
+                    {couponApplied ? (
+                      <>
+                        <span
+                          style={{
+                            textDecoration: "line-through",
+                            color: "#999",
+                            marginRight: "8px",
+                            fontSize: "0.85em",
+                          }}
+                        >
+                          Rs. {(hairOilProduct?.price || 350).toFixed(2)}
+                        </span>
+                        <span style={{ color: "#5c705e" }}>
+                          Rs. {finalPrice.toFixed(2)} INR
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        {hairOilProduct?.comparePrice && (
+                          <span
+                            style={{
+                              textDecoration: "line-through",
+                              color: "#999",
+                              fontSize: "0.85em",
+                              marginRight: "8px",
+                            }}
+                          >
+                            Rs. {Number(hairOilProduct.comparePrice).toFixed(2)}
+                          </span>
+                        )}
+                        <span>Rs. {finalPrice.toFixed(2)} INR</span>
+                      </>
+                    )}
+                  </div>
 
                   <div className="collapsible-sections">
                     <div className="collapsible-item">
@@ -440,9 +552,48 @@ const Shop: React.FC = () => {
                     <span>Item is in stock</span>
                   </div>
 
-                  <div className="promo-banner">
-                    <div className="promo-text">Valentines Day Sale 25%</div>
-                    <div className="promo-code">Use Code: VDAY25</div>
+                  <div className="coupon-section">
+                    <div className="coupon-input-wrapper">
+                      <Tag className="coupon-icon" size={20} />
+                      <input
+                        type="text"
+                        placeholder="Enter coupon code"
+                        value={couponCode}
+                        onChange={(e) =>
+                          setCouponCode(e.target.value.toUpperCase())
+                        }
+                        disabled={couponLoading || !!couponApplied}
+                        className="coupon-input"
+                      />
+                      {couponApplied ? (
+                        <button
+                          className="coupon-btn remove"
+                          onClick={removeCoupon}
+                        >
+                          Remove
+                        </button>
+                      ) : (
+                        <button
+                          className="coupon-btn apply"
+                          onClick={applyCoupon}
+                          disabled={couponLoading}
+                        >
+                          {couponLoading ? "Checking..." : "Apply"}
+                        </button>
+                      )}
+                    </div>
+                    {couponError && (
+                      <div className="coupon-message error">
+                        <XCircle size={16} />
+                        {couponError}
+                      </div>
+                    )}
+                    {couponApplied && (
+                      <div className="coupon-message success">
+                        <CheckCircle size={16} />
+                        {`Coupon "${couponApplied.couponCode}" applied! You saved ₹${(couponApplied.discountAmount || 0).toFixed(2)}`}
+                      </div>
+                    )}
                   </div>
 
                   <div className="quantity-cart-section">
@@ -470,15 +621,19 @@ const Shop: React.FC = () => {
                       className="pdp-add-to-cart"
                       onClick={() =>
                         addToCart({
-                          id: 101,
-                          title: "EXOVITA Hair Oil - The Heritage Collection",
-                          price: 1300.0,
+                          id:
+                            hairOilProduct?.id ||
+                            "9cf083a0-a7d4-4622-bddd-9324244a9bc8",
+                          title:
+                            hairOilProduct?.name ||
+                            "EXOVITA Hair Oil - The Heritage Collection",
+                          price: finalPrice,
                           image: hairOil1,
                           category: "Hair Oil",
                         })
                       }
                     >
-                      ADD TO CART • RS. 1,300.00 INR
+                      ADD TO CART • RS. {finalPrice.toFixed(2)} INR
                     </button>
                   </div>
 

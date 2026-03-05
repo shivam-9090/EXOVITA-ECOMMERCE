@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -8,6 +9,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { PaymentMethod, PaymentStatus } from "@prisma/client";
 import Razorpay from "razorpay";
 import * as crypto from "crypto";
+import { EmailService } from "../email/email.service";
 
 @Injectable()
 export class PaymentsService {
@@ -16,9 +18,12 @@ export class PaymentsService {
   private razorpayKeySecret: string;
   private razorpayWebhookSecret: string;
 
+  private readonly logger = new Logger(PaymentsService.name);
+
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
+    private email: EmailService,
   ) {
     this.razorpayKeyId =
       this.configService.get<string>("RAZORPAY_KEY_ID") || "";
@@ -26,6 +31,55 @@ export class PaymentsService {
       this.configService.get<string>("RAZORPAY_KEY_SECRET") || "";
     this.razorpayWebhookSecret =
       this.configService.get<string>("RAZORPAY_WEBHOOK_SECRET") || "";
+  }
+
+  // ─── Email helper ─────────────────────────────────────────────────────────
+  private async sendInvoiceEmail(orderId: string): Promise<void> {
+    try {
+      const order = await this.prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          user: { select: { email: true, firstName: true, lastName: true } },
+          items: { include: { product: { select: { name: true } } } },
+          address: true,
+          payment: true,
+          shipment: true,
+        },
+      });
+      if (!order?.user?.email) return;
+      await this.email.sendInvoice({
+        orderNumber: order.orderNumber,
+        customerName:
+          `${order.user.firstName || ""} ${order.user.lastName || ""}`.trim() ||
+          "Customer",
+        customerEmail: order.user.email,
+        items: order.items.map((i: any) => ({
+          name: i.product?.name || "Product",
+          quantity: i.quantity,
+          price: i.price,
+          total: i.total,
+        })),
+        subtotal: order.subtotal,
+        tax: order.tax,
+        shippingCost: order.shippingCost,
+        total: order.total,
+        paymentMethod: order.payment?.method || "RAZORPAY",
+        address: {
+          street:
+            order.address?.addressLine1 || (order.address as any)?.street || "",
+          city: order.address?.city || "",
+          state: order.address?.state || "",
+          zipCode:
+            order.address?.postalCode || (order.address as any)?.zipCode || "",
+          country: order.address?.country || "India",
+        },
+        createdAt: order.createdAt,
+        awbCode: order.shipment?.awbCode || undefined,
+        courierName: order.shipment?.courierName || undefined,
+      });
+    } catch (err) {
+      this.logger.error(`Invoice email failed for ${orderId}: ${err.message}`);
+    }
   }
 
   private getRazorpayClient() {
@@ -192,6 +246,8 @@ export class PaymentsService {
         where: { id: payment.orderId },
         data: { status: "CONFIRMED" },
       });
+      // Send invoice email for Razorpay payment
+      this.sendInvoiceEmail(payment.orderId).catch(() => {});
     }
 
     return { success: true };
@@ -265,6 +321,8 @@ export class PaymentsService {
       where: { id: payment.orderId },
       data: { status: "CONFIRMED" },
     });
+    // Send invoice email via webhook
+    this.sendInvoiceEmail(payment.orderId).catch(() => {});
   }
 
   private async handlePaymentFailed(paymentEntity: any) {
@@ -290,6 +348,204 @@ export class PaymentsService {
         },
       },
     });
+  }
+
+  // ─── Admin methods ────────────────────────────────────────────────────────
+
+  async getAdminPayments(filters: {
+    status?: string;
+    method?: string;
+    search?: string;
+    page: number;
+    limit: number;
+  }) {
+    const { status, method, search, page, limit } = filters;
+    const skip = (page - 1) * limit;
+
+    const where: any = {};
+    if (status && status !== "ALL") where.status = status;
+    if (method && method !== "ALL") where.method = method;
+    if (search) {
+      where.OR = [
+        { order: { orderNumber: { contains: search, mode: "insensitive" } } },
+        {
+          order: { user: { email: { contains: search, mode: "insensitive" } } },
+        },
+        { transactionId: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    const [payments, total] = await Promise.all([
+      this.prisma.payment.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: {
+          order: {
+            select: {
+              id: true,
+              orderNumber: true,
+              status: true,
+              total: true,
+              user: {
+                select: {
+                  id: true,
+                  email: true,
+                  firstName: true,
+                  lastName: true,
+                  phone: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+      this.prisma.payment.count({ where }),
+    ]);
+
+    return {
+      payments,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async getAdminStats() {
+    const now = new Date();
+    const todayStart = new Date(now.setHours(0, 0, 0, 0));
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const [
+      totalPayments,
+      completed,
+      failed,
+      pending,
+      todayCompleted,
+      monthCompleted,
+      totalRevenue,
+      todayRevenue,
+      monthRevenue,
+      razorpayCount,
+      codCount,
+      razorpayRevenue,
+      codRevenue,
+    ] = await Promise.all([
+      this.prisma.payment.count(),
+      this.prisma.payment.count({ where: { status: PaymentStatus.COMPLETED } }),
+      this.prisma.payment.count({ where: { status: PaymentStatus.FAILED } }),
+      this.prisma.payment.count({ where: { status: PaymentStatus.PENDING } }),
+      this.prisma.payment.count({
+        where: { status: PaymentStatus.COMPLETED, paidAt: { gte: todayStart } },
+      }),
+      this.prisma.payment.count({
+        where: { status: PaymentStatus.COMPLETED, paidAt: { gte: monthStart } },
+      }),
+      this.prisma.payment.aggregate({
+        where: { status: PaymentStatus.COMPLETED },
+        _sum: { amount: true },
+      }),
+      this.prisma.payment.aggregate({
+        where: { status: PaymentStatus.COMPLETED, paidAt: { gte: todayStart } },
+        _sum: { amount: true },
+      }),
+      this.prisma.payment.aggregate({
+        where: { status: PaymentStatus.COMPLETED, paidAt: { gte: monthStart } },
+        _sum: { amount: true },
+      }),
+      this.prisma.payment.count({
+        where: {
+          method: PaymentMethod.RAZORPAY,
+          status: PaymentStatus.COMPLETED,
+        },
+      }),
+      this.prisma.payment.count({
+        where: { method: PaymentMethod.COD, status: PaymentStatus.COMPLETED },
+      }),
+      this.prisma.payment.aggregate({
+        where: {
+          method: PaymentMethod.RAZORPAY,
+          status: PaymentStatus.COMPLETED,
+        },
+        _sum: { amount: true },
+      }),
+      this.prisma.payment.aggregate({
+        where: { method: PaymentMethod.COD, status: PaymentStatus.COMPLETED },
+        _sum: { amount: true },
+      }),
+    ]);
+
+    return {
+      totalPayments,
+      completed,
+      failed,
+      pending,
+      todayCompleted,
+      monthCompleted,
+      totalRevenue: totalRevenue._sum.amount || 0,
+      todayRevenue: todayRevenue._sum.amount || 0,
+      monthRevenue: monthRevenue._sum.amount || 0,
+      razorpayCount,
+      razorpayRevenue: razorpayRevenue._sum.amount || 0,
+      codCount,
+      codRevenue: codRevenue._sum.amount || 0,
+    };
+  }
+
+  async getAdminPaymentById(id: string) {
+    const payment = await this.prisma.payment.findUnique({
+      where: { id },
+      include: {
+        order: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                email: true,
+                firstName: true,
+                lastName: true,
+                phone: true,
+              },
+            },
+            items: {
+              include: {
+                product: { select: { id: true, name: true, thumbnail: true } },
+              },
+            },
+            address: true,
+          },
+        },
+      },
+    });
+
+    if (!payment) throw new NotFoundException("Payment not found");
+    return payment;
+  }
+
+  async updatePaymentStatus(id: string, status: string, note?: string) {
+    const payment = await this.prisma.payment.findUnique({ where: { id } });
+    if (!payment) throw new NotFoundException("Payment not found");
+
+    const data: any = {
+      status: status as PaymentStatus,
+      metadata: {
+        ...(typeof payment.metadata === "object" && payment.metadata
+          ? (payment.metadata as Record<string, unknown>)
+          : {}),
+        adminNote: note,
+        adminUpdatedAt: new Date().toISOString(),
+      },
+    };
+
+    if (status === PaymentStatus.COMPLETED) data.paidAt = new Date();
+    if (status === PaymentStatus.FAILED) data.failedAt = new Date();
+    if (status === PaymentStatus.REFUNDED) data.refundedAt = new Date();
+
+    return this.prisma.payment.update({ where: { id }, data });
   }
 
   private async findPaymentForWebhook(paymentEntity: any) {

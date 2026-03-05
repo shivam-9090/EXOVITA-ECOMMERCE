@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { STORE_API_URL } from "../apiBase";
 import { Star, CheckCircle, AlertCircle, Send } from "lucide-react";
 import "./ProductReviews.css";
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = STORE_API_URL;
 
 interface User {
   firstName: string;
@@ -23,13 +24,7 @@ interface Review {
 interface RatingSummary {
   averageRating: number;
   totalReviews: number;
-  ratingDistribution: {
-    1: number;
-    2: number;
-    3: number;
-    4: number;
-    5: number;
-  };
+  ratingDistribution: Record<number, number>;
 }
 
 interface ProductReviewsProps {

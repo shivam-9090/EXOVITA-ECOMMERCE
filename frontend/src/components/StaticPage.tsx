@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { STORE_API_URL } from "../apiBase";
 import "./StaticPage.css";
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = STORE_API_URL;
 
 interface PageData {
   id: string;

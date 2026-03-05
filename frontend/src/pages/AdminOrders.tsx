@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { ADMIN_API_URL } from "../admin/apiBase";
@@ -20,6 +20,10 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
+  Navigation,
+  Zap,
+  ExternalLink,
+  ArrowRight,
 } from "lucide-react";
 
 const API_URL = ADMIN_API_URL;
@@ -68,7 +72,12 @@ interface Order {
     shippedAt?: string;
     deliveredAt?: string;
     estimatedDelivery?: string;
-  };
+    shiprocketOrderId?: string;
+    shiprocketShipmentId?: string;
+    awbCode?: string;
+    courierName?: string;
+    shiprocketStatus?: string;
+  } | null;
 }
 
 interface Stats {
@@ -215,12 +224,25 @@ const AdminOrders = () => {
         { headers: { Authorization: `Bearer ${token}` } },
       );
       toast.success("Shipment updated successfully");
-
-      // We might need to refresh the selected order to see the changes properly if the backend returns the updated order
-      // For now, simpler to just close or re-fetch active details if we had an endpoint for single order
+      fetchOrders();
     } catch (error) {
       console.error("Failed to update shipment:", error);
       toast.error("Failed to update shipment");
+    }
+  };
+
+  const pushToShiprocket = async (orderId: string) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      await axios.post(
+        `${API_URL}/orders/admin/${orderId}/push-shiprocket`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      toast.success("Order pushed to Shiprocket â€” AWB will appear shortly");
+      setTimeout(() => fetchOrders(), 2500);
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Shiprocket push failed");
     }
   };
 
@@ -277,7 +299,7 @@ const AdminOrders = () => {
           />
           <StatsCard
             title="Total Revenue"
-            value={`₹${stats.totalRevenue?.toLocaleString()}`}
+            value={`â‚¹${stats.totalRevenue?.toLocaleString()}`}
             icon={<CheckCircle2 className="text-secondary" size={24} />}
             bg="bg-secondary/10"
           />
@@ -328,128 +350,82 @@ const AdminOrders = () => {
             <table className="min-w-full divide-y divide-sage-100">
               <thead className="bg-sage-50/50">
                 <tr>
-                  <th
-                    scope="col"
-                    className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wider text-secondary/50"
-                  >
-                    Order
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wider text-secondary/50"
-                  >
-                    Date
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wider text-secondary/50"
-                  >
-                    Customer
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wider text-secondary/50"
-                  >
-                    Total
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wider text-secondary/50"
-                  >
-                    Payment
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-8 py-5 text-left text-xs font-bold uppercase tracking-wider text-secondary/50"
-                  >
-                    Status
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-8 py-5 text-right text-xs font-bold uppercase tracking-wider text-secondary/50"
-                  >
-                    Action
-                  </th>
+                  {["Order", "Date", "Customer", "Total", "Payment", "Tracking / AWB", "Status", ""].map((h) => (
+                    <th key={h} className="px-5 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-secondary/50">
+                      {h}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-sage-100 bg-white">
                 {orders.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan={7}
-                      className="px-8 py-16 text-center text-secondary/50"
-                    >
+                    <td colSpan={8} className="px-8 py-16 text-center text-secondary/50">
                       <div className="flex flex-col items-center justify-center gap-4">
                         <div className="h-16 w-16 bg-sage-50 rounded-full flex items-center justify-center">
                           <Package className="h-8 w-8 text-secondary/30" />
                         </div>
-                        <p className="text-lg font-medium text-secondary">
-                          No orders found.
-                        </p>
+                        <p className="text-base font-medium text-secondary">No orders found.</p>
                       </div>
                     </td>
                   </tr>
                 ) : (
                   orders.map((order) => (
-                    <tr
-                      key={order.id}
-                      className="hover:bg-sage-50/30 transition-colors group"
-                    >
-                      <td className="px-8 py-5 whitespace-nowrap">
-                        <span className="font-mono text-sm font-bold text-primary group-hover:underline">
-                          #{order.orderNumber}
-                        </span>
-                        <div className="text-xs text-secondary/50 mt-1 font-medium">
-                          {order.items.length} items
-                        </div>
+                    <tr key={order.id} className="hover:bg-sage-50/30 transition-colors group">
+                      <td className="px-5 py-4 whitespace-nowrap">
+                        <span className="font-mono text-sm font-bold text-primary">#{order.orderNumber}</span>
+                        <div className="text-xs text-secondary/50 mt-0.5">{order.items.length} item{order.items.length > 1 ? "s" : ""}</div>
                       </td>
-                      <td className="px-8 py-5 whitespace-nowrap text-sm text-secondary/70">
-                        {new Date(order.createdAt).toLocaleDateString()}
+                      <td className="px-5 py-4 whitespace-nowrap text-sm text-secondary/60">
+                        {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}
                       </td>
-                      <td className="px-8 py-5 whitespace-nowrap">
+                      <td className="px-5 py-4 whitespace-nowrap">
                         <div className="text-sm font-semibold text-secondary">
-                          {order.user
-                            ? `${order.user.firstName} ${order.user.lastName}`
-                            : "Guest"}
+                          {order.user ? `${order.user.firstName} ${order.user.lastName}` : "Guest"}
                         </div>
-                        <div className="text-xs text-secondary/50 font-medium">
-                          {order.user?.email || "N/A"}
-                        </div>
+                        <div className="text-xs text-secondary/50">{order.user?.email || "N/A"}</div>
                       </td>
-                      <td className="px-8 py-5 whitespace-nowrap text-sm font-bold text-secondary">
-                        ₹{order.total.toLocaleString()}
+                      <td className="px-5 py-4 whitespace-nowrap text-sm font-bold text-secondary">
+                        â‚¹{order.total.toLocaleString("en-IN")}
                       </td>
-                      <td className="px-8 py-5 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-secondary/80 font-medium">
-                            {order.payment?.method}
-                          </span>
-                          <span
-                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wide ring-1 ring-inset ${
-                              order.payment?.status === "COMPLETED"
-                                ? "bg-primary/10 text-primary-dark ring-primary/20"
-                                : order.payment?.status === "PENDING"
-                                  ? "bg-gold/10 text-gold-dark ring-gold/20"
-                                  : "bg-sage-100 text-secondary/60 ring-secondary/10"
-                            }`}
-                          >
-                            {order.payment?.status || "N/A"}
-                          </span>
-                        </div>
+                      <td className="px-5 py-4 whitespace-nowrap">
+                        <div className="text-xs font-semibold text-secondary/70">{order.payment?.method || "â€”"}</div>
+                        <span className={`inline-flex mt-0.5 items-center rounded-full px-2 py-0.5 text-[10px] font-bold ring-1 ring-inset ${
+                          order.payment?.status === "COMPLETED"
+                            ? "bg-primary/10 text-primary-dark ring-primary/20"
+                            : order.payment?.status === "PENDING"
+                              ? "bg-gold/10 text-gold-dark ring-gold/20"
+                              : "bg-sage-100 text-secondary/60 ring-secondary/10"
+                        }`}>
+                          {order.payment?.status || "N/A"}
+                        </span>
                       </td>
-                      <td className="px-8 py-5 whitespace-nowrap">
-                        <span
-                          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold ring-1 ring-inset ${getStatusStyle(order.status)}`}
-                        >
+                      <td className="px-5 py-4 whitespace-nowrap">
+                        {order.shipment?.awbCode ? (
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <Navigation size={12} className="text-sky-600 shrink-0" />
+                              <span className="text-xs font-mono font-bold text-sky-700">{order.shipment.awbCode}</span>
+                            </div>
+                            {order.shipment?.courierName && (
+                              <div className="text-xs text-secondary/50 mt-0.5">{order.shipment.courierName}</div>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-secondary/30">â€”</span>
+                        )}
+                      </td>
+                      <td className="px-5 py-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold ring-1 ring-inset ${getStatusStyle(order.status)}`}>
                           {order.status}
                         </span>
                       </td>
-                      <td className="px-8 py-5 whitespace-nowrap text-right">
+                      <td className="px-5 py-4 whitespace-nowrap text-right">
                         <button
                           onClick={() => setSelectedOrder(order)}
-                          className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary-dark transition-colors px-3 py-1.5 rounded-lg hover:bg-primary/5"
+                          className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary-dark px-3 py-1.5 rounded-lg hover:bg-primary/5 transition-colors"
                         >
-                          <Eye size={16} /> View
+                          <Eye size={14} /> View
                         </button>
                       </td>
                     </tr>
@@ -505,13 +481,14 @@ const AdminOrders = () => {
         </div>
       </div>
 
-      {/* Detail Modal */}
+      {/* Detail Drawer */}
       {selectedOrder && (
         <OrderDetailsModal
           order={selectedOrder}
           onClose={() => setSelectedOrder(null)}
           updateStatus={updateOrderStatus}
           updateShipment={updateShipment}
+          pushToShiprocket={pushToShiprocket}
         />
       )}
     </div>
@@ -547,345 +524,260 @@ const OrderDetailsModal = ({
   onClose,
   updateStatus,
   updateShipment,
+  pushToShiprocket,
 }: {
   order: Order;
   onClose: () => void;
   updateStatus: (id: string, status: string) => void;
   updateShipment: (id: string, data: any) => void;
+  pushToShiprocket: (id: string) => Promise<void>;
 }) => {
   const [shipmentForm, setShipmentForm] = useState({
     carrier: order.shipment?.carrier || "",
-    trackingNumber: order.shipment?.trackingNumber || "",
+    trackingNumber: order.shipment?.trackingNumber || order.shipment?.awbCode || "",
     trackingUrl: order.shipment?.trackingUrl || "",
     estimatedDelivery: order.shipment?.estimatedDelivery
       ? new Date(order.shipment.estimatedDelivery).toISOString().split("T")[0]
       : "",
   });
+  const [pushingShiprocket, setPushingShiprocket] = useState(false);
 
   const handleShipmentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     updateShipment(order.id, shipmentForm);
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-end sm:justify-center p-0 sm:p-4">
-      <div
-        className="absolute inset-0 bg-secondary/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
+  const handlePush = async () => {
+    setPushingShiprocket(true);
+    try { await pushToShiprocket(order.id); } finally { setPushingShiprocket(false); }
+  };
 
-      <div className="relative w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-4xl bg-white sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 fade-in duration-300">
-        {/* Modal Header */}
-        <div className="flex items-center justify-between px-8 py-5 border-b border-sage-100 bg-sage-50/50">
+  const STEPS = ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED"];
+  const STEP_RANK: Record<string, number> = { PENDING: 0, CONFIRMED: 1, PROCESSING: 2, SHIPPED: 3, DELIVERED: 4 };
+  const rank = STEP_RANK[order.status] ?? -1;
+
+  return (
+    <div className="fixed inset-0 z-50 flex">
+      <div className="absolute inset-0 bg-secondary/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative ml-auto w-full max-w-2xl h-full bg-white shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+
+        {/* Header */}
+        <div className="flex items-start justify-between px-6 py-5 border-b border-sage-100 bg-sage-50/50 shrink-0">
           <div>
-            <h2 className="text-xl font-bold text-secondary flex items-center gap-3">
-              Order #{order.orderNumber}
-              <span
-                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold ring-1 ring-inset ${
-                  STATUS_OPTIONS.find((o) => o.value === order.status)?.color
-                }`}
-              >
+            <div className="flex items-center gap-3 flex-wrap">
+              <h2 className="text-lg font-bold text-secondary">#{order.orderNumber}</h2>
+              <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold ring-1 ring-inset ${STATUS_OPTIONS.find((o) => o.value === order.status)?.color}`}>
                 {order.status}
               </span>
-            </h2>
-            <p className="text-sm text-secondary/60 mt-1 font-medium">
-              Placed on {new Date(order.createdAt).toLocaleString()}
+            </div>
+            <p className="text-xs text-secondary/50 mt-1">
+              {new Date(order.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
             </p>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2.5 text-secondary/40 hover:text-secondary rounded-full hover:bg-sage-100 transition-colors"
-          >
-            <X size={20} />
+          <button onClick={onClose} className="p-2 text-secondary/40 hover:text-secondary rounded-xl hover:bg-sage-100 transition-colors">
+            <X size={18} />
           </button>
         </div>
 
-        {/* Modal Body */}
-        <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Customer & Address */}
-            <div className="space-y-6">
-              <section>
-                <h3 className="text-sm font-bold text-secondary uppercase tracking-wider flex items-center gap-2 mb-4">
-                  <User size={16} className="text-primary" /> Customer
-                </h3>
-                <div className="bg-sage-50/50 rounded-xl p-5 text-sm">
-                  <p className="font-bold text-secondary text-lg">
-                    {order.user
-                      ? `${order.user.firstName} ${order.user.lastName}`
-                      : "Guest User"}
-                  </p>
-                  <p className="text-secondary/70 mt-1 font-medium">
-                    {order.user?.email}
-                  </p>
-                  <p className="text-secondary/60 mt-1">
-                    {order.user?.phone || "No phone number"}
-                  </p>
-                </div>
-              </section>
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-5">
 
-              <section>
-                <h3 className="text-sm font-bold text-secondary uppercase tracking-wider flex items-center gap-2 mb-4">
-                  <MapPin size={16} className="text-primary" /> Shipping Address
-                </h3>
-                <div className="bg-sage-50/50 rounded-xl p-5 text-sm">
-                  <p className="text-secondary/80 leading-relaxed font-medium">
-                    {order.address.street}
-                    <br />
-                    {order.address.city}, {order.address.state}{" "}
-                    {order.address.zipCode}
-                    <br />
-                    {order.address.country}
-                  </p>
-                </div>
-              </section>
+          {/* Status Timeline */}
+          {!["CANCELLED", "REFUNDED"].includes(order.status) && (
+            <div className="bg-sage-50/50 rounded-xl p-4">
+              <div className="relative flex items-center justify-between">
+                <div className="absolute left-0 right-0 top-4 h-0.5 bg-sage-200 mx-6 z-0" />
+                <div className="absolute left-0 top-4 h-0.5 bg-primary z-0 mx-6 transition-all" style={{ width: `${(rank / (STEPS.length - 1)) * 100}%` }} />
+                {[
+                  { s: "PENDING", label: "Placed", Icon: Clock },
+                  { s: "CONFIRMED", label: "Confirmed", Icon: CheckCircle2 },
+                  { s: "PROCESSING", label: "Processing", Icon: Package },
+                  { s: "SHIPPED", label: "Shipped", Icon: Truck },
+                  { s: "DELIVERED", label: "Delivered", Icon: CheckCircle2 },
+                ].map(({ s, label, Icon }, i) => {
+                  const done = rank >= i;
+                  return (
+                    <div key={s} className="flex flex-col items-center gap-1 z-10 relative">
+                      <div className={`h-8 w-8 rounded-full flex items-center justify-center transition-all ${done ? "bg-primary text-white shadow-sm" : "bg-white text-secondary/30 ring-1 ring-sage-200"}`}>
+                        <Icon size={14} />
+                      </div>
+                      <span className={`text-[10px] font-semibold whitespace-nowrap ${done ? "text-primary-dark" : "text-secondary/40"}`}>{label}</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
+          )}
 
-            {/* Actions & Payment */}
-            <div className="space-y-6">
-              <section>
-                <h3 className="text-sm font-bold text-secondary uppercase tracking-wider flex items-center gap-2 mb-4">
-                  <AlertCircle size={16} className="text-primary" /> Management
-                </h3>
-                <div className="bg-white rounded-xl p-5 shadow-sm">
-                  <label className="block text-xs font-bold text-secondary/60 uppercase tracking-wider mb-2">
-                    Update Order Status
-                  </label>
-                  <select
-                    value={order.status}
-                    onChange={(e) => updateStatus(order.id, e.target.value)}
-                    className="block w-full rounded-lg border-0 py-2.5 pl-3 pr-10 text-secondary ring-1 ring-inset ring-sage-200 focus:ring-2 focus:ring-primary sm:text-sm sm:leading-6 bg-sage-50/30 px-3"
-                  >
-                    {STATUS_OPTIONS.filter((o) => o.value !== "ALL").map(
-                      (opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ),
-                    )}
-                  </select>
+          {/* Status + Payment row */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-white rounded-xl p-4 border border-sage-100 shadow-sm">
+              <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider mb-2">Update Status</p>
+              <select
+                value={order.status}
+                onChange={(e) => updateStatus(order.id, e.target.value)}
+                className="block w-full rounded-lg border-0 py-2 px-3 text-sm text-secondary ring-1 ring-inset ring-sage-200 focus:ring-2 focus:ring-primary bg-sage-50/30"
+              >
+                {STATUS_OPTIONS.filter((o) => o.value !== "ALL").map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="bg-white rounded-xl p-4 border border-sage-100 shadow-sm">
+              <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider mb-2">Payment</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-bold text-secondary">{order.payment?.method || "â€”"}</p>
+                  <p className="text-xs text-secondary/50 mt-0.5">â‚¹{order.total.toLocaleString("en-IN")}</p>
                 </div>
-              </section>
-
-              <section>
-                <h3 className="text-sm font-bold text-secondary uppercase tracking-wider flex items-center gap-2 mb-4">
-                  <CreditCard size={16} className="text-primary" /> Payment Info
-                </h3>
-                <div className="bg-sage-50/50 rounded-xl p-5 text-sm flex items-center justify-between">
-                  <div>
-                    <p className="font-bold text-secondary">
-                      {order.payment?.method || "Unknown Method"}
-                    </p>
-                    <p className="text-xs text-secondary/60 mt-1 font-medium">
-                      Transaction ID:{" "}
-                      <span className="font-mono">
-                        {order.id.slice(0, 8)}...
-                      </span>
-                    </p>
-                  </div>
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide ${
-                      order.payment?.status === "COMPLETED"
-                        ? "bg-primary/10 text-primary-dark"
-                        : "bg-gold/10 text-gold-dark"
-                    }`}
-                  >
-                    {order.payment?.status}
-                  </span>
-                </div>
-              </section>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${order.payment?.status === "COMPLETED" ? "bg-primary/10 text-primary-dark" : "bg-gold/10 text-gold-dark"}`}>
+                  {order.payment?.status || "PENDING"}
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Items Table */}
-          <section>
-            <h3 className="text-sm font-bold text-secondary uppercase tracking-wider mb-4">
-              Order Items
-            </h3>
-            <div className="rounded-xl overflow-hidden shadow-sm">
+          {/* Customer + Address */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-sage-50/50 rounded-xl p-4">
+              <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider flex items-center gap-1.5 mb-2"><User size={12} className="text-primary" /> Customer</p>
+              <p className="text-sm font-bold text-secondary">{order.user ? `${order.user.firstName} ${order.user.lastName}` : "Guest"}</p>
+              <p className="text-xs text-secondary/60 mt-0.5">{order.user?.email}</p>
+              <p className="text-xs text-secondary/50 mt-0.5">{order.user?.phone || "No phone"}</p>
+            </div>
+            <div className="bg-sage-50/50 rounded-xl p-4">
+              <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider flex items-center gap-1.5 mb-2"><MapPin size={12} className="text-primary" /> Ship To</p>
+              <p className="text-xs text-secondary/80 leading-relaxed">
+                {order.address.street}<br />
+                {order.address.city}, {order.address.state} {order.address.zipCode}<br />
+                {order.address.country}
+              </p>
+            </div>
+          </div>
+
+          {/* Shiprocket Panel */}
+          <div className={`rounded-xl p-4 border ${order.shipment?.awbCode ? "bg-sky-50/40 border-sky-200" : "bg-white border-sage-100 shadow-sm"}`}>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider flex items-center gap-1.5">
+                <Truck size={12} className="text-sky-600" /> Shiprocket Tracking
+              </p>
+              {!order.shipment?.shiprocketOrderId && (
+                <button
+                  onClick={handlePush}
+                  disabled={pushingShiprocket}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-sky-700 disabled:opacity-60 transition-colors"
+                >
+                  {pushingShiprocket ? <Loader2 size={12} className="animate-spin" /> : <Zap size={12} />}
+                  {pushingShiprocket ? "Pushingâ€¦" : "Push to Shiprocket"}
+                </button>
+              )}
+            </div>
+            {order.shipment?.awbCode ? (
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <p className="text-xs text-secondary/50 font-semibold">AWB Code</p>
+                  <p className="font-mono font-bold text-sky-700 mt-0.5">{order.shipment.awbCode}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-secondary/50 font-semibold">Courier</p>
+                  <p className="font-semibold text-secondary mt-0.5">{order.shipment.courierName || "â€”"}</p>
+                </div>
+                {order.shipment.shiprocketStatus && (
+                  <div>
+                    <p className="text-xs text-secondary/50 font-semibold">Shiprocket Status</p>
+                    <p className="font-medium text-secondary mt-0.5">{order.shipment.shiprocketStatus}</p>
+                  </div>
+                )}
+                {order.shipment.trackingUrl && (
+                  <div className="col-span-2">
+                    <a href={order.shipment.trackingUrl} target="_blank" rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-600 hover:text-sky-700">
+                      <ExternalLink size={12} /> Track on Shiprocket
+                    </a>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-xs text-secondary/50">
+                Not yet pushed. Mark order as <strong>Confirmed</strong> to auto-push, or click the button above to push manually.
+              </p>
+            )}
+          </div>
+
+          {/* Order Items */}
+          <div>
+            <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider mb-3">Order Items</p>
+            <div className="rounded-xl overflow-hidden border border-sage-100">
               <table className="min-w-full divide-y divide-sage-100">
-                <thead className="bg-sage-50/50">
+                <thead className="bg-sage-50/60">
                   <tr>
-                    <th className="px-5 py-3 text-left text-xs font-bold text-secondary/50 uppercase tracking-wider">
-                      Product
-                    </th>
-                    <th className="px-5 py-3 text-right text-xs font-bold text-secondary/50 uppercase tracking-wider">
-                      Price
-                    </th>
-                    <th className="px-5 py-3 text-right text-xs font-bold text-secondary/50 uppercase tracking-wider">
-                      Qty
-                    </th>
-                    <th className="px-5 py-3 text-right text-xs font-bold text-secondary/50 uppercase tracking-wider">
-                      Total
-                    </th>
+                    {["Product", "Price", "Qty", "Total"].map((h) => (
+                      <th key={h} className={`px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-secondary/50 ${h !== "Product" ? "text-right" : "text-left"}`}>{h}</th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-sage-100 bg-white">
                   {order.items.map((item) => (
-                    <tr
-                      key={item.id}
-                      className="hover:bg-sage-50/30 transition-colors"
-                    >
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-4">
-                          <img
-                            src={item.product.thumbnail}
-                            alt=""
-                            className="h-12 w-12 rounded-lg object-cover bg-sage-50 border border-sage-100"
-                          />
-                          <span className="text-sm font-semibold text-secondary">
-                            {item.product.name}
-                          </span>
+                    <tr key={item.id} className="hover:bg-sage-50/30">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <img src={item.product.thumbnail} alt="" className="h-9 w-9 rounded-lg object-cover border border-sage-100 shrink-0" />
+                          <span className="text-sm font-medium text-secondary">{item.product.name}</span>
                         </div>
                       </td>
-                      <td className="px-5 py-4 text-right text-sm text-secondary/70 font-medium">
-                        ₹{item.price.toLocaleString()}
-                      </td>
-                      <td className="px-5 py-4 text-right text-sm text-secondary/70 font-medium">
-                        {item.quantity}
-                      </td>
-                      <td className="px-5 py-4 text-right text-sm font-bold text-secondary">
-                        ₹{item.total.toLocaleString()}
-                      </td>
+                      <td className="px-4 py-3 text-right text-sm text-secondary/70">â‚¹{item.price.toLocaleString("en-IN")}</td>
+                      <td className="px-4 py-3 text-right text-sm text-secondary/70">{item.quantity}</td>
+                      <td className="px-4 py-3 text-right text-sm font-bold text-secondary">â‚¹{item.total.toLocaleString("en-IN")}</td>
                     </tr>
                   ))}
                 </tbody>
-                <tfoot className="bg-sage-50/30">
+                <tfoot className="divide-y divide-sage-100 border-t border-sage-100 bg-sage-50/40">
+                  {[{ label: "Subtotal", value: order.subtotal }, { label: "Shipping", value: order.shippingCost }, { label: "Tax (GST)", value: order.tax }].map((r) => (
+                    <tr key={r.label}>
+                      <td colSpan={3} className="px-4 py-2 text-right text-xs text-secondary/50 font-semibold uppercase tracking-wider">{r.label}</td>
+                      <td className="px-4 py-2 text-right text-sm text-secondary">â‚¹{r.value.toLocaleString("en-IN")}</td>
+                    </tr>
+                  ))}
                   <tr>
-                    <td
-                      colSpan={3}
-                      className="px-5 py-3 text-right text-xs text-secondary/60 font-bold uppercase tracking-wider border-t border-sage-100"
-                    >
-                      Subtotal
-                    </td>
-                    <td className="px-5 py-3 text-right text-sm text-secondary font-medium border-t border-sage-100">
-                      ₹{order.subtotal.toLocaleString()}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      colSpan={3}
-                      className="px-5 py-3 text-right text-xs text-secondary/60 font-bold uppercase tracking-wider"
-                    >
-                      Shipping
-                    </td>
-                    <td className="px-5 py-3 text-right text-sm text-secondary font-medium">
-                      ₹{order.shippingCost.toLocaleString()}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      colSpan={3}
-                      className="px-5 py-3 text-right text-xs text-secondary/60 font-bold uppercase tracking-wider"
-                    >
-                      Tax
-                    </td>
-                    <td className="px-5 py-3 text-right text-sm text-secondary font-medium">
-                      ₹{order.tax.toLocaleString()}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      colSpan={3}
-                      className="px-5 py-4 text-right text-base font-bold text-secondary uppercase tracking-wider border-t border-sage-200"
-                    >
-                      Total
-                    </td>
-                    <td className="px-5 py-4 text-right text-xl font-bold text-primary border-t border-sage-200">
-                      ₹{order.total.toLocaleString()}
-                    </td>
+                    <td colSpan={3} className="px-4 py-3 text-right text-sm font-bold text-secondary uppercase">Total</td>
+                    <td className="px-4 py-3 text-right text-lg font-bold text-primary">â‚¹{order.total.toLocaleString("en-IN")}</td>
                   </tr>
                 </tfoot>
               </table>
             </div>
-          </section>
+          </div>
 
-          {/* Shipping Form */}
-          <section className="bg-sage-50/50 rounded-xl p-6">
-            <h3 className="text-base font-bold text-secondary flex items-center gap-2 mb-5">
-              <Truck size={20} className="text-primary" /> Shipment Details
-            </h3>
-            <form
-              onSubmit={handleShipmentSubmit}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-5"
-            >
-              <div>
-                <label className="block text-xs font-bold text-secondary/60 uppercase tracking-wider mb-1.5">
-                  Carrier Name
-                </label>
-                <input
-                  type="text"
-                  value={shipmentForm.carrier}
-                  onChange={(e) =>
-                    setShipmentForm({
-                      ...shipmentForm,
-                      carrier: e.target.value,
-                    })
-                  }
-                  className="block w-full rounded-lg border-0 py-2 px-3 text-secondary shadow-sm ring-1 ring-inset ring-sage-200 placeholder:text-secondary/40 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
-                  placeholder="DHL, FedEx, etc."
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-secondary/60 uppercase tracking-wider mb-1.5">
-                  Tracking Number
-                </label>
-                <input
-                  type="text"
-                  value={shipmentForm.trackingNumber}
-                  onChange={(e) =>
-                    setShipmentForm({
-                      ...shipmentForm,
-                      trackingNumber: e.target.value,
-                    })
-                  }
-                  className="block w-full rounded-lg border-0 py-2 px-3 text-secondary shadow-sm ring-1 ring-inset ring-sage-200 placeholder:text-secondary/40 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
-                  placeholder="ABC123456789"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-secondary/60 uppercase tracking-wider mb-1.5">
-                  Tracking URL
-                </label>
-                <input
-                  type="url"
-                  value={shipmentForm.trackingUrl}
-                  onChange={(e) =>
-                    setShipmentForm({
-                      ...shipmentForm,
-                      trackingUrl: e.target.value,
-                    })
-                  }
-                  className="block w-full rounded-lg border-0 py-2 px-3 text-secondary shadow-sm ring-1 ring-inset ring-sage-200 placeholder:text-secondary/40 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
-                  placeholder="https://track.courier.com/..."
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-secondary/60 uppercase tracking-wider mb-1.5">
-                  Est. Delivery Date
-                </label>
-                <input
-                  type="date"
-                  value={shipmentForm.estimatedDelivery}
-                  onChange={(e) =>
-                    setShipmentForm({
-                      ...shipmentForm,
-                      estimatedDelivery: e.target.value,
-                    })
-                  }
-                  className="block w-full rounded-lg border-0 py-2 px-3 text-secondary shadow-sm ring-1 ring-inset ring-sage-200 placeholder:text-secondary/40 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
-                />
-              </div>
-              <div className="sm:col-span-2 flex justify-end pt-2">
-                <button
-                  type="submit"
-                  className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all hover:shadow-xl hover:-translate-y-0.5"
-                >
-                  Update Info
+          {/* Manual Shipment Override */}
+          <details className="group">
+            <summary className="cursor-pointer text-xs font-bold text-secondary/40 uppercase tracking-wider flex items-center gap-1.5 select-none hover:text-secondary/70 transition-colors py-1">
+              <ArrowRight size={12} className="group-open:rotate-90 transition-transform" /> Manual Shipment Override
+            </summary>
+            <form onSubmit={handleShipmentSubmit} className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 bg-sage-50/50 rounded-xl p-4">
+              {[
+                { label: "Carrier Name", key: "carrier", placeholder: "Blue Dart, FedExâ€¦" },
+                { label: "Tracking Number", key: "trackingNumber", placeholder: "AWB / tracking #" },
+                { label: "Tracking URL", key: "trackingUrl", placeholder: "https://â€¦" },
+                { label: "Est. Delivery", key: "estimatedDelivery", type: "date" },
+              ].map((f) => (
+                <div key={f.key}>
+                  <label className="block text-xs font-semibold text-secondary/60 mb-1">{f.label}</label>
+                  <input
+                    type={f.type || "text"}
+                    value={(shipmentForm as any)[f.key]}
+                    onChange={(e) => setShipmentForm({ ...shipmentForm, [f.key]: e.target.value })}
+                    className="w-full rounded-lg border-0 py-2 px-3 text-sm text-secondary ring-1 ring-inset ring-sage-200 focus:ring-2 focus:ring-primary bg-white"
+                    placeholder={f.placeholder}
+                  />
+                </div>
+              ))}
+              <div className="sm:col-span-2 flex justify-end">
+                <button type="submit" className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-dark transition-colors">
+                  Save Override
                 </button>
               </div>
             </form>
-          </section>
+          </details>
+
         </div>
       </div>
     </div>

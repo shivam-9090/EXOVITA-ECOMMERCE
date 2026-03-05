@@ -4,3 +4,6 @@
   padding-bottom: 4rem;
 }
 
+.home-container [class*="fade-"] {
+  margin-bottom: 4rem;
+}

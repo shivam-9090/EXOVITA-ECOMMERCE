@@ -11,9 +11,16 @@ async function bootstrap() {
     bodyParser.raw({ type: "application/json" }),
   );
 
-  // Increase payload size limit for image uploads (50MB)
-  app.use(bodyParser.json({ limit: "50mb" }));
-  app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+  // Large payload limit ONLY for upload routes
+  app.use("/api/upload", bodyParser.json({ limit: "50mb" }));
+  app.use(
+    "/api/upload",
+    bodyParser.urlencoded({ limit: "50mb", extended: true }),
+  );
+
+  // All other routes get a tight limit
+  app.use(bodyParser.json({ limit: "1mb" }));
+  app.use(bodyParser.urlencoded({ limit: "1mb", extended: true }));
 
   // Enable CORS
   const corsOrigins = (

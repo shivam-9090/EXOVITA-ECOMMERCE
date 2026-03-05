@@ -1,4 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
@@ -252,5 +256,133 @@ export class UsersService {
       adminUsers,
       customerUsers: totalUsers - adminUsers,
     };
+  }
+
+  async getUserAddresses(userId: string) {
+    return this.prisma.address.findMany({
+      where: { userId },
+      orderBy: [{ isDefault: "desc" }, { createdAt: "desc" }],
+    });
+  }
+
+  async createUserAddress(userId: string, data: any) {
+    const requiredFields = [
+      "fullName",
+      "phone",
+      "addressLine1",
+      "city",
+      "state",
+      "country",
+      "postalCode",
+    ];
+
+    for (const field of requiredFields) {
+      if (!data?.[field]) {
+        throw new BadRequestException(`${field} is required`);
+      }
+    }
+
+    const shouldSetDefault = !!data.isDefault;
+
+    return this.prisma.$transaction(async (tx) => {
+      if (shouldSetDefault) {
+        await tx.address.updateMany({
+          where: { userId, isDefault: true },
+          data: { isDefault: false },
+        });
+      }
+
+      const existingCount = await tx.address.count({ where: { userId } });
+
+      return tx.address.create({
+        data: {
+          userId,
+          fullName: data.fullName,
+          phone: data.phone,
+          addressLine1: data.addressLine1,
+          addressLine2: data.addressLine2 || null,
+          city: data.city,
+          state: data.state,
+          country: data.country,
+          postalCode: data.postalCode,
+          isDefault: shouldSetDefault || existingCount === 0,
+        },
+      });
+    });
+  }
+
+  async updateUserAddress(userId: string, addressId: string, data: any) {
+    const existing = await this.prisma.address.findFirst({
+      where: { id: addressId, userId },
+    });
+
+    if (!existing) {
+      throw new NotFoundException("Address not found");
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      if (data?.isDefault === true) {
+        await tx.address.updateMany({
+          where: { userId, isDefault: true, NOT: { id: addressId } },
+          data: { isDefault: false },
+        });
+      }
+
+      return tx.address.update({
+        where: { id: addressId },
+        data: {
+          fullName: data.fullName ?? existing.fullName,
+          phone: data.phone ?? existing.phone,
+          addressLine1: data.addressLine1 ?? existing.addressLine1,
+          addressLine2:
+            data.addressLine2 !== undefined
+              ? data.addressLine2 || null
+              : existing.addressLine2,
+          city: data.city ?? existing.city,
+          state: data.state ?? existing.state,
+          country: data.country ?? existing.country,
+          postalCode: data.postalCode ?? existing.postalCode,
+          isDefault: data.isDefault ?? existing.isDefault,
+        },
+      });
+    });
+  }
+
+  async deleteUserAddress(userId: string, addressId: string) {
+    const existing = await this.prisma.address.findFirst({
+      where: { id: addressId, userId },
+    });
+
+    if (!existing) {
+      throw new NotFoundException("Address not found");
+    }
+
+    const orderCount = await this.prisma.order.count({
+      where: { addressId, userId },
+    });
+
+    if (orderCount > 0) {
+      throw new BadRequestException(
+        "Cannot delete address used in previous orders",
+      );
+    }
+
+    await this.prisma.address.delete({ where: { id: addressId } });
+
+    if (existing.isDefault) {
+      const latestAddress = await this.prisma.address.findFirst({
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+      });
+
+      if (latestAddress) {
+        await this.prisma.address.update({
+          where: { id: latestAddress.id },
+          data: { isDefault: true },
+        });
+      }
+    }
+
+    return { success: true };
   }
 }

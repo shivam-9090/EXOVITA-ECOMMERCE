@@ -19,6 +19,7 @@ import {
   ChevronRight,
   PanelLeftClose,
   PanelLeftOpen,
+  Mail,
 } from "lucide-react";
 
 interface AdminSidebarProps {
@@ -63,7 +64,10 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen, setIsOpen }) => {
     },
     {
       title: "Content",
-      items: [{ icon: FileText, label: "CMS / Pages", path: "/admin/cms" }],
+      items: [
+        { icon: FileText, label: "CMS / Pages", path: "/admin/cms" },
+        { icon: Mail, label: "Notifications", path: "/admin/notifications" },
+      ],
     },
     {
       title: "System",

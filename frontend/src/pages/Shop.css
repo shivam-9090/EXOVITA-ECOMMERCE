@@ -29,7 +29,7 @@
   overflow: hidden;
   background-color: #000;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .shop-banner-video video {
@@ -50,7 +50,7 @@
   color: #fff;
   background-color: #1a1a1a;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .slide-indicators {
@@ -74,7 +74,7 @@
 .slide-dot.active {
   background-color: #fff;
   transform: scale(1.3);
-  box-shadow: 0 0 8px rgba(255,255,255,0.6);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
 }
 
 .banner-images-slideshow {
@@ -93,7 +93,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: opacity 1.5s ease-in-out, transform 10s ease;
+  transition:
+    opacity 1.5s ease-in-out,
+    transform 10s ease;
   opacity: 0;
 }
 
@@ -119,7 +121,7 @@
 }
 
 .visuals-content h1 {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 3.5rem;
   margin-bottom: 0.5rem;
   font-weight: 500;
@@ -127,7 +129,7 @@
 }
 
 .visuals-content p {
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 1.1rem;
   letter-spacing: 0.5px;
   opacity: 0.9;
@@ -155,7 +157,7 @@
     flex-direction: column;
     height: auto;
   }
-  
+
   .shop-banner-video {
     width: 100%;
     height: 250px;
@@ -165,7 +167,7 @@
     width: 100%;
     height: 300px;
   }
-  
+
   .visuals-content h1 {
     font-size: 2.5rem;
   }
@@ -176,7 +178,7 @@
   margin: 0;
   padding: 0;
   display: flex;
-  gap: 0; 
+  gap: 0;
   position: relative;
 }
 
@@ -193,7 +195,7 @@
   opacity: 0;
   visibility: hidden;
   overflow: hidden;
-  
+
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: none;
   border-right: 1px solid transparent;
@@ -211,9 +213,9 @@
 
 @media (max-width: 1024px) {
   .shop-page {
-     padding-bottom: 2rem;
+    padding-bottom: 2rem;
   }
-  
+
   .shop-sidebar {
     position: fixed;
     top: 0;
@@ -221,12 +223,12 @@
     height: 100vh;
     z-index: 2000;
     margin-right: 0;
-    box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
     transform: translateX(-100%);
     width: 280px;
     transition: transform 0.3s ease;
     opacity: 1;
-    visibility: visible; 
+    visibility: visible;
   }
 
   .shop-sidebar.open {
@@ -242,7 +244,7 @@
   }
 
   /* When sidebar is open on mobile, don't squish content, content stays full width underneath overlay */
-  
+
   .sidebar-overlay {
     display: block;
     position: fixed;
@@ -250,13 +252,13 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     z-index: 1500;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s;
   }
-  
+
   .sidebar-overlay.active {
     opacity: 1;
     visibility: visible;
@@ -264,7 +266,7 @@
 }
 
 .filter-group h4 {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 1.2rem;
   margin-bottom: 1.5rem;
   color: var(--color-text-main);
@@ -279,7 +281,7 @@
 }
 
 .shop-sidebar ul li {
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   margin-bottom: 0.8rem;
   cursor: pointer;
   color: var(--color-text-light);
@@ -312,7 +314,7 @@
 }
 
 .sidebar-header h3 {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 1.8rem;
   margin: 0;
   color: var(--color-text-main);
@@ -323,7 +325,9 @@
   position: absolute; /* Take out of flow to allow perfect centering of title */
   right: 0;
   top: 50%;
-  transform: translateY(-60%); /* Adjusted slightly to align visually with text baseline */
+  transform: translateY(
+    -60%
+  ); /* Adjusted slightly to align visually with text baseline */
   background: none;
   border: none;
   font-size: 2.5rem; /* Increased size significantly */
@@ -342,7 +346,7 @@
 /* Main Content Styling */
 .shop-content {
   flex: 1;
-  padding: 0; 
+  padding: 0;
   min-width: 0; /* Critical: allows grid to shrink when sidebar opens */
   width: 100%; /* Ensure it takes full width initially */
   box-sizing: border-box;
@@ -393,7 +397,7 @@
 }
 
 .product-count {
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   color: var(--color-text-light);
   font-size: 0.95rem;
 }
@@ -412,7 +416,7 @@
 .custom-select-wrapper {
   position: relative;
   width: 180px;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 0.9rem;
 }
 
@@ -442,7 +446,7 @@
   border: 1px solid var(--color-border);
   border-top: none;
   z-index: 100;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .custom-option {
@@ -532,13 +536,13 @@
     background-color: var(--color-white);
     z-index: 1001; /* High z-index to overlay everything */
     padding: 2rem;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     transition: left 0.3s ease;
-    
+
     /* Reset desktop props */
-    margin-right: 0; 
-    opacity: 1; 
-    visibility: visible; 
+    margin-right: 0;
+    opacity: 1;
+    visibility: visible;
     overflow-y: auto;
     border-right: none;
   }
@@ -558,7 +562,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
@@ -586,7 +590,7 @@
     align-items: stretch; /* Full width controls */
     gap: 1.5rem;
   }
-  
+
   .sort-dropdown {
     width: 100%;
     justify-content: space-between;
@@ -613,13 +617,13 @@
   }
 
   .product-count {
-    order: -1; 
+    order: -1;
     text-align: center;
     width: 100%;
     padding-bottom: 0.5rem;
     border-bottom: 1px dashed var(--color-border);
   }
-  
+
   .mobile-filter-btn {
     width: 100%;
     justify-content: center;
@@ -642,7 +646,7 @@
   color: var(--color-primary);
   padding: 0.7rem 2rem;
   border-radius: 50px;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
@@ -674,14 +678,18 @@
   white-space: nowrap;
   width: 100%;
   position: relative;
-  border-bottom: 2px solid rgba(0,0,0,0.1);
-  
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+
   /* Texture Pattern - Speckled/Noise Look */
-  background-image: 
-    radial-gradient(rgba(255,255,255,0.2) 1px, transparent 1px),
-    radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px);
-  background-size: 4px 4px, 6px 6px;
-  background-position: 0 0, 3px 3px;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+  background-size:
+    4px 4px,
+    6px 6px;
+  background-position:
+    0 0,
+    3px 3px;
 }
 
 .ticker-track {
@@ -692,7 +700,7 @@
 
 .ticker-item {
   display: inline-block;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-weight: 700;
   font-size: 0.75rem;
   letter-spacing: 0.15em;
@@ -708,15 +716,19 @@
 }
 
 @keyframes ticker-move {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 @media (max-width: 768px) {
   .category-tabs {
     gap: 0.4rem;
   }
-  
+
   .category-tab {
     padding: 0.6rem 1.5rem;
     font-size: 0.9rem;
@@ -796,7 +808,7 @@
 }
 
 .pdp-title-detail {
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 1.75rem;
   font-weight: 400;
   color: #2c2c2c;
@@ -805,7 +817,7 @@
 }
 
 .pdp-price-detail {
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 1.125rem;
   color: #2c2c2c;
   font-weight: 400;
@@ -830,7 +842,7 @@
   padding: 1rem 0;
   background: none;
   border: none;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 1rem;
   color: #2c2c2c;
   cursor: pointer;
@@ -851,7 +863,7 @@
 
 .collapsible-content {
   padding: 0 0 1rem 0;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 0.95rem;
   line-height: 1.7;
   color: #555;
@@ -862,32 +874,117 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 0.95rem;
   color: #2c2c2c;
 }
 
-/* Promo Banner */
-.promo-banner {
-  text-align: center;
-  padding: 1rem;
+/* Coupon Section */
+.coupon-section {
+  margin: 1.25rem 0;
+  padding: 1.25rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border: 2px dashed #d0d8d1;
+}
+
+.coupon-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
+  padding: 0.4rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #d0d0d0;
 }
 
-.promo-text {
-  font-family: 'Lato', sans-serif;
-  font-size: 1rem;
+.coupon-icon {
+  color: #5c705e;
+  margin-left: 0.25rem;
+  flex-shrink: 0;
+}
+
+.coupon-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.95rem;
+  text-transform: uppercase;
   font-weight: 600;
-  color: #2c2c2c;
-  margin-bottom: 0.25rem;
+  font-family: "Lato", sans-serif;
+  background: transparent;
+  letter-spacing: 0.05em;
 }
 
-.promo-code {
-  font-family: 'Lato', sans-serif;
-  font-size: 0.9rem;
-  color: #666;
+.coupon-input::placeholder {
+  font-weight: 400;
+  text-transform: none;
+  color: #aaa;
+}
+
+.coupon-input:disabled {
+  color: #999;
+  cursor: not-allowed;
+}
+
+.coupon-btn {
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-size: 0.875rem;
+  font-family: "Lato", sans-serif;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.coupon-btn.apply {
+  background: linear-gradient(135deg, #5c705e 0%, #4a5a4c 100%);
+  color: #fff;
+}
+
+.coupon-btn.apply:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(92, 112, 94, 0.35);
+}
+
+.coupon-btn.apply:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.coupon-btn.remove {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.coupon-btn.remove:hover {
+  background: #fecaca;
+}
+
+.coupon-message {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.65rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 7px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: "Lato", sans-serif;
+}
+
+.coupon-message.success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.coupon-message.error {
+  background: #fee2e2;
+  color: #dc2626;
 }
 
 /* Quantity and Cart Section */
@@ -926,7 +1023,7 @@
   height: 50px;
   border: none;
   text-align: center;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 1rem;
 }
 
@@ -943,7 +1040,7 @@
   color: #fff;
   border: none;
   border-radius: 4px;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 0.9rem;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -976,7 +1073,7 @@
 }
 
 .pdp-feature-item p {
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 0.9rem;
   line-height: 1.5;
   margin: 0;
@@ -1007,5 +1104,3 @@
     width: 100%;
   }
 }
-
-

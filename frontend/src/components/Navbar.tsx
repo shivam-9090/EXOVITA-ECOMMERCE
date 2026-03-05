@@ -1,14 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import {
-  ShoppingBag,
-  User,
-  Menu,
-  Heart,
-  Search,
-  X,
-  LogOut,
-} from "lucide-react";
+import { ShoppingBag, User, Menu, Heart, X, LogOut } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { useAuth } from "../context/AuthContext";
@@ -105,7 +97,7 @@ const Navbar: React.FC = () => {
             </div>
           </Link>
 
-          <div className="navbar-left-actions">
+          <div className="navbar-center-links">
             <Link to="/" className="nav-action-item">
               Home
             </Link>
@@ -118,17 +110,6 @@ const Navbar: React.FC = () => {
             <Link to="/contact" className="nav-action-item">
               Contact Us
             </Link>
-          </div>
-
-          <div className="navbar-search-container">
-            <div className="search-bar">
-              <Search size={18} className="search-icon" strokeWidth={1.5} />
-              <input
-                type="text"
-                placeholder="Search for what you want?..."
-                autoComplete="off"
-              />
-            </div>
           </div>
 
           <div className="navbar-icons">

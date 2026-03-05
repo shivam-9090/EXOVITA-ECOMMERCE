@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { STORE_API_URL } from "../apiBase";
 import {
   Star,
   ShoppingBag,
@@ -15,7 +16,7 @@ import { useCart } from "../context/CartContext";
 import ProductReviews from "../components/ProductReviews";
 import "./ProductDetails.css";
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = STORE_API_URL;
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();

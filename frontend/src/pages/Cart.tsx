@@ -110,9 +110,9 @@ const Cart: React.FC = () => {
             <span>₹{total.toFixed(2)}</span>
           </div>
 
-          <button className="checkout-btn">
+          <Link to="/checkout" className="checkout-btn">
             Proceed to Checkout <ArrowRight size={18} />
-          </button>
+          </Link>
         </div>
       </div>
     </div>

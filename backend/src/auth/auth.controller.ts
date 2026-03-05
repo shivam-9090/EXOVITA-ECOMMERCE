@@ -22,6 +22,25 @@ import { GetRequestInfo } from "./decorators/request-info.decorator";
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  // Step 1: Send OTP to email before account creation
+  @Post("send-otp")
+  async sendOtp(@Body() registerDto: RegisterDto) {
+    return this.authService.sendRegistrationOTP(registerDto);
+  }
+
+  // Step 2: Verify OTP → create account → return tokens
+  @Post("verify-otp")
+  async verifyOtp(
+    @Body() body: { email: string; otp: string },
+    @GetRequestInfo() requestInfo: { ipAddress: string; userAgent: string },
+  ) {
+    return this.authService.verifyRegistrationOTP(
+      body.email,
+      body.otp,
+      requestInfo,
+    );
+  }
+
   @Post("register")
   async register(
     @Body() registerDto: RegisterDto,

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import axios from "axios";
+import { STORE_API_URL } from "../apiBase";
 import {
   User,
   Mail,
@@ -14,8 +16,23 @@ import {
 } from "lucide-react";
 import "./Profile.css";
 
+const API_URL = STORE_API_URL;
+
+interface Address {
+  id: string;
+  fullName: string;
+  phone: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  country: string;
+  postalCode: string;
+  isDefault: boolean;
+}
+
 const Profile: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -23,8 +40,10 @@ const Profile: React.FC = () => {
     lastName: user?.lastName || "",
     phone: user?.phone || "",
   });
+  const [addresses, setAddresses] = useState<Address[]>([]);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!user) {
       navigate("/");
       return;
@@ -34,9 +53,28 @@ const Profile: React.FC = () => {
     if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
       navigate("/admin");
     }
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
-  if (!user) {
+  useEffect(() => {
+    if (user) {
+      fetchAddresses();
+    }
+  }, [user]);
+
+  const fetchAddresses = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.get(`${API_URL}/users/me/addresses`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setAddresses(response.data || []);
+    } catch (error) {
+      console.error("Failed to fetch addresses:", error);
+      setAddresses([]);
+    }
+  };
+
+  if (authLoading || !user) {
     return null;
   }
 
@@ -211,6 +249,37 @@ const Profile: React.FC = () => {
                 Logout
               </button>
             </div>
+          </div>
+
+          <div className="profile-section">
+            <div className="section-header">
+              <h2>Saved Addresses</h2>
+            </div>
+
+            {addresses.length === 0 ? (
+              <p className="empty-addresses">
+                No saved addresses yet. Add one during checkout.
+              </p>
+            ) : (
+              <div className="saved-addresses-grid">
+                {addresses.map((address) => (
+                  <div key={address.id} className="saved-address-card">
+                    <p className="saved-address-name">
+                      {address.fullName} {address.isDefault ? "(Default)" : ""}
+                    </p>
+                    <p>{address.phone}</p>
+                    <p>
+                      {address.addressLine1}
+                      {address.addressLine2 ? `, ${address.addressLine2}` : ""}
+                    </p>
+                    <p>
+                      {address.city}, {address.state}, {address.country} -{" "}
+                      {address.postalCode}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -12,14 +12,14 @@
 }
 
 .contact-header h1 {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 3.5rem;
   color: var(--color-primary-dark);
   margin-bottom: 1rem;
 }
 
 .contact-header p {
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 1.2rem;
   color: var(--color-text-light);
   max-width: 600px;
@@ -45,8 +45,8 @@
   background-color: var(--color-white);
   padding: 2.5rem;
   border-radius: 16px;
-  border: 1px solid rgba(0,0,0,0.03);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
   height: 100%;
 }
 
@@ -75,14 +75,14 @@
 }
 
 .info-content h3 {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 1.4rem;
   color: var(--color-primary-dark);
   margin-bottom: 0.5rem;
 }
 
 .info-content p {
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   color: var(--color-text-light);
   line-height: 1.6;
   margin: 0;
@@ -97,7 +97,7 @@
   background-color: var(--color-white);
   padding: 3rem;
   border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
 }
 
 .form-group {
@@ -111,7 +111,7 @@
 
 .form-group label {
   display: block;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-weight: 600;
   color: var(--color-primary-dark);
   margin-bottom: 0.5rem;
@@ -124,7 +124,7 @@
   padding: 1rem;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 1rem;
   transition: all 0.3s ease;
   background-color: #fcfcfc;
@@ -149,7 +149,7 @@
   border: none;
   padding: 1rem 3rem;
   border-radius: 50px;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-weight: 600;
   font-size: 1.1rem;
   cursor: pointer;
@@ -163,6 +163,24 @@
   background-color: var(--color-primary);
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(58, 75, 59, 0.15);
+}
+
+.send-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spinning {
+  animation: spin 0.8s linear infinite;
 }
 
 @media (max-width: 968px) {
@@ -180,7 +198,7 @@
   .contact-header h1 {
     font-size: 2.5rem;
   }
-  
+
   .contact-form {
     padding: 2rem;
   }

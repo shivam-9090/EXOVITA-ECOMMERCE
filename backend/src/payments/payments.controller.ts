@@ -2,14 +2,19 @@ import {
   BadRequestException,
   Controller,
   Post,
+  Get,
+  Patch,
   Body,
   Headers,
   Req,
   UseGuards,
+  Query,
+  Param,
 } from "@nestjs/common";
 import { Request } from "express";
 import { PaymentsService } from "./payments.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { AdminGuard } from "../auth/guards/admin.guard";
 
 @Controller("payments")
 export class PaymentsController {
@@ -64,5 +69,46 @@ export class PaymentsController {
     }
 
     return this.paymentsService.handleWebhook(signature, payload);
+  }
+
+  // ─── Admin routes ────────────────────────────────────────────────────────
+
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @Get("admin/all")
+  getAdminPayments(
+    @Query("status") status?: string,
+    @Query("method") method?: string,
+    @Query("search") search?: string,
+    @Query("page") page = "1",
+    @Query("limit") limit = "20",
+  ) {
+    return this.paymentsService.getAdminPayments({
+      status,
+      method,
+      search,
+      page: parseInt(page, 10),
+      limit: parseInt(limit, 10),
+    });
+  }
+
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @Get("admin/stats")
+  getAdminStats() {
+    return this.paymentsService.getAdminStats();
+  }
+
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @Get("admin/:id")
+  getAdminPaymentById(@Param("id") id: string) {
+    return this.paymentsService.getAdminPaymentById(id);
+  }
+
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @Patch("admin/:id/status")
+  updatePaymentStatus(
+    @Param("id") id: string,
+    @Body() body: { status: string; note?: string },
+  ) {
+    return this.paymentsService.updatePaymentStatus(id, body.status, body.note);
   }
 }
