@@ -4,6 +4,7 @@
 
 [build.environment]
   VITE_APP_VARIANT = "admin"
+  VITE_API_URL = "http://173.212.249.202:3000/api"
 
 [[redirects]]
   from = "/*"
