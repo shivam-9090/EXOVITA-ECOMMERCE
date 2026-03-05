@@ -1,10 +1,5 @@
 [build]
-  command = "npm run build:admin"
   publish = "dist"
-
-[build.environment]
-  VITE_APP_VARIANT = "admin"
-  VITE_API_URL = "https://api.exovitaherbal.com/api"
 
 [[redirects]]
   from = "/*"

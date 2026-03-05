@@ -59,3 +59,5 @@ coverage/
 
 # Local temp files
 plan.txt
+
+frontend/package-lock.json
