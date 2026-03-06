@@ -15,6 +15,9 @@ interface ShiprocketOrder {
     state: string;
     zipCode: string;
     country: string;
+    phone?: string;
+    fullName?: string;
+    addressLine1?: string;
   };
   items: Array<{
     product: { name: string; id: string };
@@ -129,7 +132,17 @@ export class ShiprocketService {
     const firstName = user?.firstName || "Customer";
     const lastName = user?.lastName || "";
     const email = user?.email || "customer@exovita.com";
-    const phone = user?.phone || "9999999999";
+
+    // Prefer address phone → user phone → fallback. Strip non-digits and ensure 10 digits.
+    const rawPhone =
+      (addr as any).phone || user?.phone || "9999999999";
+    const digitsOnly = String(rawPhone).replace(/\D/g, "");
+    // Take last 10 digits (handles +91 prefix etc.)
+    const phone =
+      digitsOnly.length >= 10
+        ? digitsOnly.slice(-10)
+        : digitsOnly.padEnd(10, "0");
+
     const paymentMethod = order.payment?.method === "COD" ? "COD" : "Prepaid";
 
     const orderItems = order.items.map((item) => ({
@@ -149,9 +162,9 @@ export class ShiprocketService {
       ...(this.channelId ? { channel_id: this.channelId } : {}),
 
       // Billing = Shipping
-      billing_customer_name: firstName,
-      billing_last_name: lastName,
-      billing_address: addr.street,
+      billing_customer_name: (addr as any).fullName || firstName + (lastName ? " " + lastName : ""),
+      billing_last_name: "",
+      billing_address: (addr as any).addressLine1 || addr.street || "N/A",
       billing_city: addr.city,
       billing_pincode: addr.zipCode,
       billing_state: addr.state,
