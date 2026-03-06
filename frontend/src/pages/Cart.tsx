@@ -32,9 +32,10 @@ const Cart: React.FC = () => {
           {items.map((item) => (
             <div key={item.id} className="cart-item">
               <img
-                src={item.image}
+                src={item.image || "/logo.png"}
                 alt={item.title}
                 className="cart-item-image"
+                onError={(e) => { (e.target as HTMLImageElement).src = "/logo.png"; }}
               />
               <div className="cart-item-info">
                 <h3>{item.title}</h3>
