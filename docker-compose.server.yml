@@ -77,10 +77,10 @@ services:
       SMTP_USER: ${SMTP_USER}
       SMTP_PASS: ${SMTP_PASS}
       SMTP_FROM_NAME: ${SMTP_FROM_NAME:-Exovita Herbal}
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_REGION: ${AWS_REGION:-us-east-1}
-      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      MEDIA_BASE_URL: https://api.exovitaherbal.com/media
+      UPLOAD_DIR: /app/media/products
+    volumes:
+      - /root/exovita/media:/app/media
     ports:
       - "3000:3000"
     depends_on:

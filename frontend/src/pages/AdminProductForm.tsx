@@ -57,8 +57,7 @@ const AdminProductForm: React.FC = () => {
     isFeatured: false,
   });
 
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+
 
   useEffect(() => {
     fetchCategories();
@@ -156,35 +155,49 @@ const AdminProductForm: React.FC = () => {
     });
   };
 
-  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const uploadImageToServer = async (file: File): Promise<string> => {
+    const token = localStorage.getItem("accessToken");
+    const formPayload = new FormData();
+    formPayload.append("file", file);
+    const response = await axios.post(`${API_URL}/upload/single`, formPayload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data.url;
+  };
+
+  const handleThumbnailChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setThumbnailFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prev) => ({
-          ...prev,
-          thumbnail: reader.result as string,
-        }));
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+    try {
+      toast.loading("Uploading thumbnail...", { id: "thumb-upload" });
+      const url = await uploadImageToServer(file);
+      setFormData((prev) => ({ ...prev, thumbnail: url }));
+      toast.success("Thumbnail uploaded!", { id: "thumb-upload" });
+    } catch {
+      toast.error("Failed to upload thumbnail", { id: "thumb-upload" });
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const files = Array.from(e.target.files || []);
-    setImageFiles((prev) => [...prev, ...files]);
-
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prev) => ({
-          ...prev,
-          images: [...prev.images, reader.result as string],
-        }));
-      };
-      reader.readAsDataURL(file);
-    });
+    if (!files.length) return;
+    try {
+      toast.loading(`Uploading ${files.length} image(s)...`, {
+        id: "img-upload",
+      });
+      const urls = await Promise.all(files.map(uploadImageToServer));
+      setFormData((prev) => ({ ...prev, images: [...prev.images, ...urls] }));
+      toast.success("Images uploaded!", { id: "img-upload" });
+    } catch {
+      toast.error("Failed to upload images", { id: "img-upload" });
+    }
   };
 
   const removeImage = (index: number) => {
@@ -192,9 +205,6 @@ const AdminProductForm: React.FC = () => {
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
     }));
-    setImageFiles((prev) => prev.filter((_, i) => i !== index));
-
-    // Clear the file input value if needed - harder with React ref but not critical
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

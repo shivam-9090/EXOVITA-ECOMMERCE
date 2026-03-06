@@ -1,12 +1,11 @@
 import {
   BadRequestException,
   Injectable,
-  InternalServerErrorException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import * as AWS from "aws-sdk";
-import { extname } from "path";
+import { extname, join } from "path";
 import { randomUUID } from "crypto";
+import * as fs from "fs";
 import {
   ALLOWED_IMAGE_EXTENSIONS,
   ALLOWED_IMAGE_MIME_TYPES,
@@ -15,22 +14,25 @@ import {
 
 @Injectable()
 export class UploadService {
-  private s3: AWS.S3;
   private readonly maxFileSize: number;
-  private readonly acl: string;
+  private readonly uploadDir: string;
+  private readonly mediaBaseUrl: string;
 
   constructor(private configService: ConfigService) {
-    this.s3 = new AWS.S3({
-      accessKeyId: this.configService.get("AWS_ACCESS_KEY_ID"),
-      secretAccessKey: this.configService.get("AWS_SECRET_ACCESS_KEY"),
-      region: this.configService.get("AWS_REGION"),
-    });
-
     this.maxFileSize = Number(
       this.configService.get("UPLOAD_MAX_FILE_SIZE") ||
         DEFAULT_MAX_FILE_SIZE_BYTES,
     );
-    this.acl = this.configService.get("AWS_S3_ACL") || "public-read";
+    this.uploadDir =
+      this.configService.get("UPLOAD_DIR") || "/app/media/products";
+    this.mediaBaseUrl =
+      this.configService.get("MEDIA_BASE_URL") ||
+      "https://api.exovitaherbal.com/media";
+
+    // Ensure upload directory exists
+    if (!fs.existsSync(this.uploadDir)) {
+      fs.mkdirSync(this.uploadDir, { recursive: true });
+    }
   }
 
   private validateFile(file: Express.Multer.File) {
@@ -68,34 +70,24 @@ export class UploadService {
   async uploadFile(file: Express.Multer.File, folder: string = "products") {
     this.validateFile(file);
 
-    const bucket = this.configService.get("AWS_S3_BUCKET");
-    if (!bucket) {
-      throw new InternalServerErrorException("Upload bucket is not configured");
+    const sanitizedName = this.sanitizeBaseFilename(file.originalname);
+    const fileName = `${Date.now()}-${randomUUID()}-${sanitizedName}`;
+
+    const targetDir = join(this.uploadDir);
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
     }
 
-    const sanitizedName = this.sanitizeBaseFilename(file.originalname);
-    const fileName = `${folder}/${Date.now()}-${randomUUID()}-${sanitizedName}`;
+    const filePath = join(targetDir, fileName);
+    fs.writeFileSync(filePath, file.buffer);
 
-    const params = {
-      Bucket: bucket,
-      Key: fileName,
-      Body: file.buffer,
-      ContentType: file.mimetype,
-      ACL: this.acl,
-      CacheControl: "public, max-age=31536000, immutable",
-      Metadata: {
-        uploadedBy: "exovita-api",
-      },
-    };
-
-    const result = await this.s3.upload(params).promise();
-    return result.Location;
+    return `${this.mediaBaseUrl}/products/${fileName}`;
   }
 
   async uploadMultipleFiles(
     files: Express.Multer.File[],
     folder: string = "products",
-  ) {
+  ): Promise<string[]> {
     if (!files || files.length === 0) {
       throw new BadRequestException("At least one file is required");
     }
