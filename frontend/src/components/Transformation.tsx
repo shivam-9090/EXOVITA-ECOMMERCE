@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import "./Transformation.css";
-import beforeImg from "../assets/hair/before.jpeg";
-import afterImg from "../assets/hair/after.jpeg";
+const beforeImg = "https://api.exovitaherbal.com/media/hair/before.jpeg";
+const afterImg = "https://api.exovitaherbal.com/media/hair/after.jpeg";
 
 const Transformation: React.FC = () => {
   const [sliderPosition, setSliderPosition] = useState(50);

@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import "./LoginModal.css";
-import googleIcon from "../assets/google-icon.svg";
+const googleIcon = "https://api.exovitaherbal.com/media/google-icon.svg";
 import { STORE_API_URL } from "../apiBase";
 
 interface LoginModalProps {

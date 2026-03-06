@@ -1,6 +1,6 @@
 import React from "react";
 import "./WhyChooseExovita.css";
-import featureImage from "../assets/hair oil/hair_oil_1.jpg";
+const featureImage = "https://api.exovitaherbal.com/media/hair%20oil/hair_oil_1.jpg";
 
 const WhyChooseExovita: React.FC = () => {
   const reasons = [

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./NaturalLuxurySection.css";
-import showcase3 from "../assets/showcase-1.jpg";
-import showcase4 from "../assets/box-1.png";
+const showcase3 = "https://api.exovitaherbal.com/media/showcase-1.jpg";
+const showcase4 = "https://api.exovitaherbal.com/media/box-1.png";
 
 const NaturalLuxurySection: React.FC = () => {
   const [activeSlide, setActiveSlide] = useState(0);

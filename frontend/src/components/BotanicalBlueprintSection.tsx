@@ -1,14 +1,14 @@
 import React, { useMemo, useEffect, useRef, useState } from 'react';
 import './BotanicalBlueprintSection.css';
 
-// Lazy load images handled by browser (loading="lazy") but we import normally for bundler
-import amlaImg from '../assets/Botanical Blueprint/amla.jpg';
-import bhringrajImg from '../assets/Botanical Blueprint/bhrigraj.jpg';
-import brahmiImg from '../assets/Botanical Blueprint/Brahmi.jpg';
-import hibiscusImg from '../assets/Botanical Blueprint/hibiscus.jpg';
-import neemImg from '../assets/Botanical Blueprint/Neem.jpg';
-import shikakaiImg from '../assets/Botanical Blueprint/shikakai.jpeg';
-import coconutOilImg from '../assets/Botanical Blueprint/Coconut.jpg';
+const MEDIA = "https://api.exovitaherbal.com/media";
+const amlaImg = `${MEDIA}/Botanical%20Blueprint/amla.jpg`;
+const bhringrajImg = `${MEDIA}/Botanical%20Blueprint/bhrigraj.jpg`;
+const brahmiImg = `${MEDIA}/Botanical%20Blueprint/Brahmi.jpg`;
+const hibiscusImg = `${MEDIA}/Botanical%20Blueprint/hibiscus.jpg`;
+const neemImg = `${MEDIA}/Botanical%20Blueprint/Neem.jpg`;
+const shikakaiImg = `${MEDIA}/Botanical%20Blueprint/shikakai.jpeg`;
+const coconutOilImg = `${MEDIA}/Botanical%20Blueprint/Coconut.jpg`;
 
 const BotanicalBlueprintSection: React.FC = () => {
   

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import './About.css';
 import AnimatedSection from '../components/AnimatedSection';
-import aboutVideo from '../assets/about/exo-1-reel.mp4';
+const aboutVideo = "https://api.exovitaherbal.com/media/about/exo-1-reel.mp4";
 
 const About: React.FC = () => {
   useEffect(() => {

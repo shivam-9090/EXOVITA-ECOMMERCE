@@ -18,13 +18,14 @@ import { useCart } from "../context/CartContext";
 import BotanicalBlueprintSection from "../components/BotanicalBlueprintSection";
 import ShopReviewSection from "../components/ShopReviewSection";
 
-import collectionVideo from "../assets/our-collection/exovita.mp4";
-import collectionImg1 from "../assets/our-collection/Gemini_Generated_Image_88p17088p17088p1.png";
-import collectionImg2 from "../assets/our-collection/Gemini_Generated_Image_ktcxhuktcxhuktcx.png";
+const MEDIA = "https://api.exovitaherbal.com/media";
+const collectionVideo = `${MEDIA}/our-collection/exovita.mp4`;
+const collectionImg1 = `${MEDIA}/our-collection/Gemini_Generated_Image_88p17088p17088p1.png`;
+const collectionImg2 = `${MEDIA}/our-collection/Gemini_Generated_Image_ktcxhuktcxhuktcx.png`;
 
-import hairOil1 from "../assets/hair oil/hair_oil_1.jpg";
-import hairOil2 from "../assets/hair oil/hair_oil_2.png";
-import hairOil3 from "../assets/hair oil/hair_oil_3.png";
+const hairOil1 = `${MEDIA}/hair%20oil/hair_oil_1.jpg`;
+const hairOil2 = `${MEDIA}/hair%20oil/hair_oil_2.png`;
+const hairOil3 = `${MEDIA}/hair%20oil/hair_oil_3.png`;
 
 const API_URL = STORE_API_URL;
 

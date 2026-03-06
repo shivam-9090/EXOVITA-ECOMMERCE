@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './HeroSection.css';
 
-import heroImg from '../assets/hero.jpeg';
+const heroImg = "https://api.exovitaherbal.com/media/hero.jpeg";
 
 const HeroSection: React.FC = () => {
   return (
