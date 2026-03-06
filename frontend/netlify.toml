@@ -1,6 +1,9 @@
 [build]
   publish = "dist"
 
+[build.environment]
+  VITE_API_URL = "https://api.exovitaherbal.com/api"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
