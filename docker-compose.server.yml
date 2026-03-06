@@ -9,8 +9,6 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-exovita}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-exovita_password}
       POSTGRES_DB: ${POSTGRES_DB:-exovita_db}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -25,8 +23,6 @@ services:
     image: redis:7-alpine
     container_name: exovita-redis
     restart: unless-stopped
-    ports:
-      - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
@@ -82,7 +78,7 @@ services:
     volumes:
       - /root/exovita/media:/app/media
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       postgres:
         condition: service_healthy
