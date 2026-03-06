@@ -12,14 +12,10 @@ import {
 import { OrdersService } from "./orders.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { AdminGuard } from "../auth/guards/admin.guard";
-import { ShiprocketService } from "../shipping/shiprocket.service";
 
 @Controller("orders")
 export class OrdersController {
-  constructor(
-    private ordersService: OrdersService,
-    private shiprocket: ShiprocketService,
-  ) {}
+  constructor(private ordersService: OrdersService) {}
 
   // === ADMIN ENDPOINTS (must come before :id routes) ===
 
@@ -92,16 +88,18 @@ export class OrdersController {
     return this.ordersService.updateShipment(id, shipmentDto);
   }
 
-  // Admin: Manually push order to Shiprocket
+  // Admin: Manually push order to Shiprocket (saves AWB + IDs)
   @Post("admin/:id/push-shiprocket")
   @UseGuards(JwtAuthGuard, AdminGuard)
-  async pushToShiprocket(
-    @Param("id") id: string,
-  ): Promise<Record<string, any>> {
-    const order = await this.ordersService.getOrderById(id);
-    const srRes = await this.shiprocket.createOrder(order as any);
-    // Persist the AWB + IDs back to our shipment record
-    return { success: true, shiprocket: srRes as any };
+  pushToShiprocket(@Param("id") id: string) {
+    return this.ordersService.adminPushToShiprocket(id);
+  }
+
+  // Admin: Refresh Shiprocket tracking status
+  @Get("admin/:id/refresh-tracking")
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  refreshTracking(@Param("id") id: string) {
+    return this.ordersService.refreshShiprocketTracking(id);
   }
 
   // === PUBLIC ENDPOINTS (no auth required) ===

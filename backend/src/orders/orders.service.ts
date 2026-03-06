@@ -394,6 +394,7 @@ export class OrdersService {
         user: { select: { email: true, firstName: true, lastName: true } },
         address: true,
         payment: true,
+        shipment: true,
         items: { include: { product: { select: { name: true } } } },
       },
     });
@@ -477,11 +478,66 @@ export class OrdersService {
         );
     }
 
+    // Auto-cancel on Shiprocket if already pushed
+    if ((order as any).shipment?.shiprocketOrderId && this.shiprocket.isConfigured) {
+      this.shiprocket
+        .cancelOrder([Number((order as any).shipment.shiprocketOrderId)])
+        .catch((err) =>
+          this.logger.error(
+            `Shiprocket cancel failed for ${orderId}: ${err.message}`,
+          ),
+        );
+    }
+
     return {
       success: true,
       order: updatedOrder,
       message: "Order cancelled successfully",
     };
+  }
+
+  // Admin: push order to Shiprocket and persist AWB / IDs
+  async adminPushToShiprocket(orderId: string) {
+    const order = await this.getOrderById(orderId);
+    if ((order as any).shipment?.shiprocketOrderId) {
+      throw new BadRequestException('Order already pushed to Shiprocket');
+    }
+    const srRes = await this.shiprocket.createOrder(order as any);
+    await this.prisma.shipment.update({
+      where: { orderId },
+      data: {
+        shiprocketOrderId: String(srRes.order_id),
+        shiprocketShipmentId: String(srRes.shipment_id),
+        awbCode: srRes.awb_code || null,
+        courierName: srRes.courier_name || null,
+        shiprocketStatus: srRes.status || null,
+        carrier: srRes.courier_name || null,
+        trackingNumber: srRes.awb_code || null,
+      },
+    });
+    this.logger.log(
+      `Admin pushed order ${orderId} to Shiprocket: srOrderId=${srRes.order_id} awb=${srRes.awb_code}`,
+    );
+    return { success: true, shiprocket: srRes };
+  }
+
+  // Admin: refresh Shiprocket tracking status for an order
+  async refreshShiprocketTracking(orderId: string) {
+    const shipment = await this.prisma.shipment.findUnique({
+      where: { orderId },
+    });
+    if (!shipment?.awbCode) {
+      return { tracked: false, reason: 'No AWB code on this order' };
+    }
+    const tracking = await this.shiprocket.trackByAWB(shipment.awbCode);
+    const currentStatus = tracking?.tracking_data?.current_status;
+    if (currentStatus) {
+      await this.prisma.shipment.update({
+        where: { orderId },
+        data: { shiprocketStatus: currentStatus },
+      });
+    }
+    return { tracked: true, tracking };
   }
 
   // === ADMIN METHODS ===

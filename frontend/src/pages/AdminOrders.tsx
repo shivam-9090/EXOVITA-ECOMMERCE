@@ -152,6 +152,22 @@ const AdminOrders = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
+  const fetchOrderById = async (orderId: string) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const res = await axios.get(`${API_URL}/orders/admin/${orderId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const updated = res.data;
+      setOrders((prev) => prev.map((o) => (o.id === orderId ? updated : o)));
+      setSelectedOrder((prev) =>
+        prev && prev.id === orderId ? updated : prev,
+      );
+    } catch (error) {
+      console.error("Failed to refresh order:", error);
+    }
+  };
+
   const fetchOrders = async () => {
     try {
       setLoading(true);
@@ -239,10 +255,41 @@ const AdminOrders = () => {
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      toast.success("Order pushed to Shiprocket — AWB will appear shortly");
-      setTimeout(() => fetchOrders(), 2500);
+      toast.success("Order pushed to Shiprocket — AWB assigned");
+      setTimeout(() => fetchOrderById(orderId), 2000);
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "Shiprocket push failed");
+    }
+  };
+
+  const refreshTracking = async (orderId: string) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const res = await axios.get(
+        `${API_URL}/orders/admin/${orderId}/refresh-tracking`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      await fetchOrderById(orderId);
+      return res.data as {
+        tracked: boolean;
+        reason?: string;
+        tracking?: {
+          tracking_data?: {
+            current_status?: string;
+            etd?: string;
+            courier_name?: string;
+            awb_code?: string;
+            shipment_track_activities?: Array<{
+              date: string;
+              activity: string;
+              location: string;
+            }>;
+          };
+        };
+      };
+    } catch {
+      toast.error("Failed to refresh tracking");
+      return null;
     }
   };
 
@@ -534,6 +581,7 @@ const AdminOrders = () => {
           updateStatus={updateOrderStatus}
           updateShipment={updateShipment}
           pushToShiprocket={pushToShiprocket}
+          refreshTracking={refreshTracking}
         />
       )}
     </div>
@@ -570,12 +618,14 @@ const OrderDetailsModal = ({
   updateStatus,
   updateShipment,
   pushToShiprocket,
+  refreshTracking,
 }: {
   order: Order;
   onClose: () => void;
   updateStatus: (id: string, status: string) => void;
   updateShipment: (id: string, data: any) => void;
   pushToShiprocket: (id: string) => Promise<void>;
+  refreshTracking: (id: string) => Promise<any>;
 }) => {
   const [shipmentForm, setShipmentForm] = useState({
     carrier: order.shipment?.carrier || "",
@@ -587,6 +637,33 @@ const OrderDetailsModal = ({
       : "",
   });
   const [pushingShiprocket, setPushingShiprocket] = useState(false);
+  const [refreshingTracking, setRefreshingTracking] = useState(false);
+  const [trackingActivities, setTrackingActivities] = useState<
+    Array<{ date: string; activity: string; location: string }>
+  >([]);
+
+  // Auto-fetch tracking activities when modal opens with an AWB
+  useEffect(() => {
+    if (order.shipment?.awbCode) {
+      handleRefreshTracking(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order.shipment?.awbCode]);
+
+  const handleRefreshTracking = async (showToast = true) => {
+    setRefreshingTracking(true);
+    try {
+      const result = await refreshTracking(order.id);
+      if (result?.tracking?.tracking_data?.shipment_track_activities) {
+        setTrackingActivities(
+          result.tracking.tracking_data.shipment_track_activities.slice(0, 5),
+        );
+      }
+      if (showToast) toast.success("Tracking refreshed");
+    } finally {
+      setRefreshingTracking(false);
+    }
+  };
 
   const handleShipmentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -769,60 +846,105 @@ const OrderDetailsModal = ({
               <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider flex items-center gap-1.5">
                 <Truck size={12} className="text-sky-600" /> Shiprocket Tracking
               </p>
-              {!order.shipment?.shiprocketOrderId && (
-                <button
-                  onClick={handlePush}
-                  disabled={pushingShiprocket}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-sky-700 disabled:opacity-60 transition-colors"
-                >
-                  {pushingShiprocket ? (
-                    <Loader2 size={12} className="animate-spin" />
-                  ) : (
-                    <Zap size={12} />
-                  )}
-                  {pushingShiprocket ? "Pushing…" : "Push to Shiprocket"}
-                </button>
-              )}
+              <div className="flex items-center gap-2">
+                {order.shipment?.awbCode && (
+                  <button
+                    onClick={() => handleRefreshTracking(true)}
+                    disabled={refreshingTracking}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-sky-100 px-3 py-1.5 text-xs font-bold text-sky-700 hover:bg-sky-200 disabled:opacity-60 transition-colors"
+                  >
+                    {refreshingTracking ? (
+                      <Loader2 size={12} className="animate-spin" />
+                    ) : (
+                      <Navigation size={12} />
+                    )}
+                    {refreshingTracking ? "Refreshing…" : "Refresh Status"}
+                  </button>
+                )}
+                {!order.shipment?.shiprocketOrderId && (
+                  <button
+                    onClick={handlePush}
+                    disabled={pushingShiprocket}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-sky-700 disabled:opacity-60 transition-colors"
+                  >
+                    {pushingShiprocket ? (
+                      <Loader2 size={12} className="animate-spin" />
+                    ) : (
+                      <Zap size={12} />
+                    )}
+                    {pushingShiprocket ? "Pushing…" : "Push to Shiprocket"}
+                  </button>
+                )}
+              </div>
             </div>
             {order.shipment?.awbCode ? (
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div>
-                  <p className="text-xs text-secondary/50 font-semibold">
-                    AWB Code
-                  </p>
-                  <p className="font-mono font-bold text-sky-700 mt-0.5">
-                    {order.shipment.awbCode}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-secondary/50 font-semibold">
-                    Courier
-                  </p>
-                  <p className="font-semibold text-secondary mt-0.5">
-                    {order.shipment.courierName || "—"}
-                  </p>
-                </div>
-                {order.shipment.shiprocketStatus && (
+              <div className="space-y-3">
+                {/* AWB + Courier + Status row */}
+                <div className="grid grid-cols-3 gap-3 text-sm">
                   <div>
-                    <p className="text-xs text-secondary/50 font-semibold">
-                      Shiprocket Status
+                    <p className="text-xs text-secondary/50 font-semibold">AWB Code</p>
+                    <p className="font-mono font-bold text-sky-700 mt-0.5">
+                      {order.shipment.awbCode}
                     </p>
-                    <p className="font-medium text-secondary mt-0.5">
-                      {order.shipment.shiprocketStatus}
+                  </div>
+                  <div>
+                    <p className="text-xs text-secondary/50 font-semibold">Courier</p>
+                    <p className="font-semibold text-secondary mt-0.5">
+                      {order.shipment.courierName || "—"}
                     </p>
+                  </div>
+                  {order.shipment.shiprocketStatus && (
+                    <div>
+                      <p className="text-xs text-secondary/50 font-semibold">Status</p>
+                      <span className="inline-flex mt-0.5 items-center rounded-full bg-sky-100 px-2 py-0.5 text-xs font-bold text-sky-700">
+                        {order.shipment.shiprocketStatus}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {/* Live tracking activities */}
+                {trackingActivities.length > 0 && (
+                  <div className="mt-2 border-t border-sky-100 pt-3">
+                    <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider mb-2">
+                      Recent Activity
+                    </p>
+                    <div className="space-y-2">
+                      {trackingActivities.map((act, i) => (
+                        <div key={i} className="flex gap-3 text-xs">
+                          <div className="flex flex-col items-center">
+                            <div
+                              className={`h-2 w-2 rounded-full mt-1 shrink-0 ${i === 0 ? "bg-sky-600" : "bg-sky-200"}`}
+                            />
+                            {i < trackingActivities.length - 1 && (
+                              <div className="w-px flex-1 bg-sky-100 mt-1" />
+                            )}
+                          </div>
+                          <div className="pb-2">
+                            <p className={`font-semibold ${i === 0 ? "text-sky-700" : "text-secondary/70"}`}>
+                              {act.activity}
+                            </p>
+                            <p className="text-secondary/40 mt-0.5">
+                              {act.location} &middot;{" "}
+                              {new Date(act.date).toLocaleString("en-IN", {
+                                dateStyle: "short",
+                                timeStyle: "short",
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
                 {order.shipment.trackingUrl && (
-                  <div className="col-span-2">
-                    <a
-                      href={order.shipment.trackingUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-600 hover:text-sky-700"
-                    >
-                      <ExternalLink size={12} /> Track on Shiprocket
-                    </a>
-                  </div>
+                  <a
+                    href={order.shipment.trackingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-600 hover:text-sky-700"
+                  >
+                    <ExternalLink size={12} /> Track on Shiprocket
+                  </a>
                 )}
               </div>
             ) : (
