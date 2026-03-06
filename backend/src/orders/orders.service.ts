@@ -266,8 +266,10 @@ export class OrdersService {
       return newOrder;
     });
 
-    // Fire order confirmation email (async, non-blocking)
-    this.sendOrderEmail(order.id, "confirmation").catch(() => {});
+    // For COD: send confirmation immediately. For Razorpay: email sent after payment is verified.
+    if (paymentMethod === PaymentMethod.COD) {
+      this.sendOrderEmail(order.id, "confirmation").catch(() => {});
+    }
 
     return {
       success: true,

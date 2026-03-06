@@ -47,7 +47,7 @@ export class PaymentsService {
         },
       });
       if (!order?.user?.email) return;
-      await this.email.sendInvoice({
+      const emailData = {
         orderNumber: order.orderNumber,
         customerName:
           `${order.user.firstName || ""} ${order.user.lastName || ""}`.trim() ||
@@ -76,7 +76,9 @@ export class PaymentsService {
         createdAt: order.createdAt,
         awbCode: order.shipment?.awbCode || undefined,
         courierName: order.shipment?.courierName || undefined,
-      });
+      };
+      await this.email.sendOrderConfirmation(emailData);
+      await this.email.sendInvoice(emailData);
     } catch (err) {
       this.logger.error(`Invoice email failed for ${orderId}: ${err.message}`);
     }
