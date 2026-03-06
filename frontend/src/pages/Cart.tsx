@@ -35,7 +35,9 @@ const Cart: React.FC = () => {
                 src={item.image || "/logo.png"}
                 alt={item.title}
                 className="cart-item-image"
-                onError={(e) => { (e.target as HTMLImageElement).src = "/logo.png"; }}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "/logo.png";
+                }}
               />
               <div className="cart-item-info">
                 <h3>{item.title}</h3>

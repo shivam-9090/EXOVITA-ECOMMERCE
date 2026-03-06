@@ -57,8 +57,6 @@ const AdminProductForm: React.FC = () => {
     isFeatured: false,
   });
 
-
-
   useEffect(() => {
     fetchCategories();
     if (isEdit) {
@@ -183,9 +181,7 @@ const AdminProductForm: React.FC = () => {
     }
   };
 
-  const handleImageChange = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
     try {

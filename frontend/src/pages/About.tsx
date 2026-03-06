@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import './About.css';
-import AnimatedSection from '../components/AnimatedSection';
+import React, { useEffect } from "react";
+import "./About.css";
+import AnimatedSection from "../components/AnimatedSection";
 const aboutVideo = "https://api.exovitaherbal.com/media/about/exo-1-reel.mp4";
 
 const About: React.FC = () => {
@@ -10,13 +10,16 @@ const About: React.FC = () => {
 
   return (
     <div className="about-page-new">
-      
       {/* Hero Section */}
       <section className="about-hero">
         <AnimatedSection animation="fade-in">
           <div className="about-hero-content">
-            <h1 className="hero-title">The Essence of <span className="text-highlight">EXOVITA</span></h1>
-            <p className="hero-subtitle">Where ancient wisdom meets modern soul.</p>
+            <h1 className="hero-title">
+              The Essence of <span className="text-highlight">EXOVITA</span>
+            </h1>
+            <p className="hero-subtitle">
+              Where ancient wisdom meets modern soul.
+            </p>
             <div className="hero-divider"></div>
           </div>
         </AnimatedSection>
@@ -30,14 +33,17 @@ const About: React.FC = () => {
               <div className="text-block">
                 <h2 className="section-title">The Origin</h2>
                 <p className="lead-text">
-                  EXOVITA was not born in a boardroom. It began with a simple question: 
+                  EXOVITA was not born in a boardroom. It began with a simple
+                  question:
                   <em>What if care could be pure again?</em>
                 </p>
                 <p>
-                  On <strong>Oct 8th, 2025</strong>, we embarked on a journey to reclaim the slower, honest path. 
-                  In a world rushing towards shortcuts, we chose to stand still and listen to nature. 
-                  Inspired by Ayurvedic traditions passed down through generations, we create products 
-                  that nurture not just the body, but the spirit within.
+                  On <strong>Oct 8th, 2025</strong>, we embarked on a journey to
+                  reclaim the slower, honest path. In a world rushing towards
+                  shortcuts, we chose to stand still and listen to nature.
+                  Inspired by Ayurvedic traditions passed down through
+                  generations, we create products that nurture not just the
+                  body, but the spirit within.
                 </p>
               </div>
               <div className="visual-block calendar-visual">
@@ -66,24 +72,23 @@ const About: React.FC = () => {
               <span>Life</span>
             </div>
           </div>
-          <p className="philosophy-quote">"Self-care going beyond appearance to become a ritual of wellness."</p>
+          <p className="philosophy-quote">
+            "Self-care going beyond appearance to become a ritual of wellness."
+          </p>
         </AnimatedSection>
       </section>
-
-
 
       {/* Hair Oil & Soap Details */}
       <section className="about-section products-info-section">
         <div className="container">
-          
           <AnimatedSection animation="slide-in-left">
             <div className="product-feature-row">
               <div className="feature-text">
                 <h3>Ayurvedic Hair Oil</h3>
                 <p>
-                  Nourishment doesn't happen on the surface; it happens at the root. 
-                  Our oils are a blend of patience and potency, designed to strengthen, 
-                  calm, and revitalize your hair from within.
+                  Nourishment doesn't happen on the surface; it happens at the
+                  root. Our oils are a blend of patience and potency, designed
+                  to strengthen, calm, and revitalize your hair from within.
                 </p>
                 <ul className="feature-list">
                   <li>Strengthens roots & reduces hair fall</li>
@@ -93,7 +98,13 @@ const About: React.FC = () => {
               </div>
               <div className="visual-block frame-visual frame-visual-1">
                 <div className="frame-inner video-container">
-                  <video autoPlay muted playsInline loop={false} className="about-feature-video">
+                  <video
+                    autoPlay
+                    muted
+                    playsInline
+                    loop={false}
+                    className="about-feature-video"
+                  >
                     <source src={aboutVideo} type="video/mp4" />
                   </video>
                 </div>
@@ -106,9 +117,10 @@ const About: React.FC = () => {
               <div className="feature-text">
                 <h3>Handmade Ritual Soaps</h3>
                 <p>
-                   Cleansing should be a caress, not a strip-down. Our small-batch soaps 
-                   retain the natural glycerin and goodness of herbs, ensuring your skin 
-                   feels grounded and soft after every wash.
+                  Cleansing should be a caress, not a strip-down. Our
+                  small-batch soaps retain the natural glycerin and goodness of
+                  herbs, ensuring your skin feels grounded and soft after every
+                  wash.
                 </p>
                 <ul className="feature-list">
                   <li>Retains natural skin moisture</li>
@@ -116,12 +128,11 @@ const About: React.FC = () => {
                   <li>Free from sulphates & parabens</li>
                 </ul>
               </div>
-               <div className="visual-block frame-visual frame-visual-2">
+              <div className="visual-block frame-visual frame-visual-2">
                 <div className="frame-inner"></div>
               </div>
             </div>
           </AnimatedSection>
-        
         </div>
       </section>
 
@@ -132,7 +143,6 @@ const About: React.FC = () => {
           <p>Stay Natural. Stay Mindful. Stay True.</p>
         </AnimatedSection>
       </section>
-
     </div>
   );
 };

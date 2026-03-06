@@ -1,7 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-} from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { extname, join } from "path";
 import { randomUUID } from "crypto";
