@@ -239,7 +239,7 @@ const AdminOrders = () => {
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      toast.success("Order pushed to Shiprocket â€” AWB will appear shortly");
+      toast.success("Order pushed to Shiprocket — AWB will appear shortly");
       setTimeout(() => fetchOrders(), 2500);
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "Shiprocket push failed");
@@ -299,7 +299,7 @@ const AdminOrders = () => {
           />
           <StatsCard
             title="Total Revenue"
-            value={`â‚¹${stats.totalRevenue?.toLocaleString()}`}
+            value={`₹${stats.totalRevenue?.toLocaleString()}`}
             icon={<CheckCircle2 className="text-secondary" size={24} />}
             bg="bg-secondary/10"
           />
@@ -350,8 +350,20 @@ const AdminOrders = () => {
             <table className="min-w-full divide-y divide-sage-100">
               <thead className="bg-sage-50/50">
                 <tr>
-                  {["Order", "Date", "Customer", "Total", "Payment", "Tracking / AWB", "Status", ""].map((h) => (
-                    <th key={h} className="px-5 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-secondary/50">
+                  {[
+                    "Order",
+                    "Date",
+                    "Customer",
+                    "Total",
+                    "Payment",
+                    "Tracking / AWB",
+                    "Status",
+                    "",
+                  ].map((h) => (
+                    <th
+                      key={h}
+                      className="px-5 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-secondary/50"
+                    >
                       {h}
                     </th>
                   ))}
@@ -360,43 +372,67 @@ const AdminOrders = () => {
               <tbody className="divide-y divide-sage-100 bg-white">
                 {orders.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-8 py-16 text-center text-secondary/50">
+                    <td
+                      colSpan={8}
+                      className="px-8 py-16 text-center text-secondary/50"
+                    >
                       <div className="flex flex-col items-center justify-center gap-4">
                         <div className="h-16 w-16 bg-sage-50 rounded-full flex items-center justify-center">
                           <Package className="h-8 w-8 text-secondary/30" />
                         </div>
-                        <p className="text-base font-medium text-secondary">No orders found.</p>
+                        <p className="text-base font-medium text-secondary">
+                          No orders found.
+                        </p>
                       </div>
                     </td>
                   </tr>
                 ) : (
                   orders.map((order) => (
-                    <tr key={order.id} className="hover:bg-sage-50/30 transition-colors group">
+                    <tr
+                      key={order.id}
+                      className="hover:bg-sage-50/30 transition-colors group"
+                    >
                       <td className="px-5 py-4 whitespace-nowrap">
-                        <span className="font-mono text-sm font-bold text-primary">#{order.orderNumber}</span>
-                        <div className="text-xs text-secondary/50 mt-0.5">{order.items.length} item{order.items.length > 1 ? "s" : ""}</div>
+                        <span className="font-mono text-sm font-bold text-primary">
+                          #{order.orderNumber}
+                        </span>
+                        <div className="text-xs text-secondary/50 mt-0.5">
+                          {order.items.length} item
+                          {order.items.length > 1 ? "s" : ""}
+                        </div>
                       </td>
                       <td className="px-5 py-4 whitespace-nowrap text-sm text-secondary/60">
-                        {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}
+                        {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                          day: "2-digit",
+                          month: "short",
+                        })}
                       </td>
                       <td className="px-5 py-4 whitespace-nowrap">
                         <div className="text-sm font-semibold text-secondary">
-                          {order.user ? `${order.user.firstName} ${order.user.lastName}` : "Guest"}
+                          {order.user
+                            ? `${order.user.firstName} ${order.user.lastName}`
+                            : "Guest"}
                         </div>
-                        <div className="text-xs text-secondary/50">{order.user?.email || "N/A"}</div>
+                        <div className="text-xs text-secondary/50">
+                          {order.user?.email || "N/A"}
+                        </div>
                       </td>
                       <td className="px-5 py-4 whitespace-nowrap text-sm font-bold text-secondary">
-                        â‚¹{order.total.toLocaleString("en-IN")}
+                        ₹{order.total.toLocaleString("en-IN")}
                       </td>
                       <td className="px-5 py-4 whitespace-nowrap">
-                        <div className="text-xs font-semibold text-secondary/70">{order.payment?.method || "â€”"}</div>
-                        <span className={`inline-flex mt-0.5 items-center rounded-full px-2 py-0.5 text-[10px] font-bold ring-1 ring-inset ${
-                          order.payment?.status === "COMPLETED"
-                            ? "bg-primary/10 text-primary-dark ring-primary/20"
-                            : order.payment?.status === "PENDING"
-                              ? "bg-gold/10 text-gold-dark ring-gold/20"
-                              : "bg-sage-100 text-secondary/60 ring-secondary/10"
-                        }`}>
+                        <div className="text-xs font-semibold text-secondary/70">
+                          {order.payment?.method || "—"}
+                        </div>
+                        <span
+                          className={`inline-flex mt-0.5 items-center rounded-full px-2 py-0.5 text-[10px] font-bold ring-1 ring-inset ${
+                            order.payment?.status === "COMPLETED"
+                              ? "bg-primary/10 text-primary-dark ring-primary/20"
+                              : order.payment?.status === "PENDING"
+                                ? "bg-gold/10 text-gold-dark ring-gold/20"
+                                : "bg-sage-100 text-secondary/60 ring-secondary/10"
+                          }`}
+                        >
                           {order.payment?.status || "N/A"}
                         </span>
                       </td>
@@ -404,19 +440,28 @@ const AdminOrders = () => {
                         {order.shipment?.awbCode ? (
                           <div>
                             <div className="flex items-center gap-1.5">
-                              <Navigation size={12} className="text-sky-600 shrink-0" />
-                              <span className="text-xs font-mono font-bold text-sky-700">{order.shipment.awbCode}</span>
+                              <Navigation
+                                size={12}
+                                className="text-sky-600 shrink-0"
+                              />
+                              <span className="text-xs font-mono font-bold text-sky-700">
+                                {order.shipment.awbCode}
+                              </span>
                             </div>
                             {order.shipment?.courierName && (
-                              <div className="text-xs text-secondary/50 mt-0.5">{order.shipment.courierName}</div>
+                              <div className="text-xs text-secondary/50 mt-0.5">
+                                {order.shipment.courierName}
+                              </div>
                             )}
                           </div>
                         ) : (
-                          <span className="text-xs text-secondary/30">â€”</span>
+                          <span className="text-xs text-secondary/30">—</span>
                         )}
                       </td>
                       <td className="px-5 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold ring-1 ring-inset ${getStatusStyle(order.status)}`}>
+                        <span
+                          className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold ring-1 ring-inset ${getStatusStyle(order.status)}`}
+                        >
                           {order.status}
                         </span>
                       </td>
@@ -534,7 +579,8 @@ const OrderDetailsModal = ({
 }) => {
   const [shipmentForm, setShipmentForm] = useState({
     carrier: order.shipment?.carrier || "",
-    trackingNumber: order.shipment?.trackingNumber || order.shipment?.awbCode || "",
+    trackingNumber:
+      order.shipment?.trackingNumber || order.shipment?.awbCode || "",
     trackingUrl: order.shipment?.trackingUrl || "",
     estimatedDelivery: order.shipment?.estimatedDelivery
       ? new Date(order.shipment.estimatedDelivery).toISOString().split("T")[0]
@@ -549,45 +595,69 @@ const OrderDetailsModal = ({
 
   const handlePush = async () => {
     setPushingShiprocket(true);
-    try { await pushToShiprocket(order.id); } finally { setPushingShiprocket(false); }
+    try {
+      await pushToShiprocket(order.id);
+    } finally {
+      setPushingShiprocket(false);
+    }
   };
 
   const STEPS = ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED"];
-  const STEP_RANK: Record<string, number> = { PENDING: 0, CONFIRMED: 1, PROCESSING: 2, SHIPPED: 3, DELIVERED: 4 };
+  const STEP_RANK: Record<string, number> = {
+    PENDING: 0,
+    CONFIRMED: 1,
+    PROCESSING: 2,
+    SHIPPED: 3,
+    DELIVERED: 4,
+  };
   const rank = STEP_RANK[order.status] ?? -1;
 
   return (
     <div className="fixed inset-0 z-50 flex">
-      <div className="absolute inset-0 bg-secondary/40 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-secondary/40 backdrop-blur-sm"
+        onClick={onClose}
+      />
       <div className="relative ml-auto w-full max-w-2xl h-full bg-white shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
-
         {/* Header */}
         <div className="flex items-start justify-between px-6 py-5 border-b border-sage-100 bg-sage-50/50 shrink-0">
           <div>
             <div className="flex items-center gap-3 flex-wrap">
-              <h2 className="text-lg font-bold text-secondary">#{order.orderNumber}</h2>
-              <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold ring-1 ring-inset ${STATUS_OPTIONS.find((o) => o.value === order.status)?.color}`}>
+              <h2 className="text-lg font-bold text-secondary">
+                #{order.orderNumber}
+              </h2>
+              <span
+                className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold ring-1 ring-inset ${STATUS_OPTIONS.find((o) => o.value === order.status)?.color}`}
+              >
                 {order.status}
               </span>
             </div>
             <p className="text-xs text-secondary/50 mt-1">
-              {new Date(order.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
+              {new Date(order.createdAt).toLocaleString("en-IN", {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
             </p>
           </div>
-          <button onClick={onClose} className="p-2 text-secondary/40 hover:text-secondary rounded-xl hover:bg-sage-100 transition-colors">
+          <button
+            onClick={onClose}
+            className="p-2 text-secondary/40 hover:text-secondary rounded-xl hover:bg-sage-100 transition-colors"
+          >
             <X size={18} />
           </button>
         </div>
 
         {/* Body */}
         <div className="flex-1 overflow-y-auto p-6 space-y-5">
-
           {/* Status Timeline */}
           {!["CANCELLED", "REFUNDED"].includes(order.status) && (
             <div className="bg-sage-50/50 rounded-xl p-4">
               <div className="relative flex items-center justify-between">
                 <div className="absolute left-0 right-0 top-4 h-0.5 bg-sage-200 mx-6 z-0" />
-                <div className="absolute left-0 top-4 h-0.5 bg-primary z-0 mx-6 transition-all" style={{ width: `${(rank / (STEPS.length - 1)) * 100}%` }} />
+                <div
+                  className="absolute left-0 top-4 h-0.5 bg-primary z-0 mx-6 transition-all"
+                  style={{ width: `${(rank / (STEPS.length - 1)) * 100}%` }}
+                />
                 {[
                   { s: "PENDING", label: "Placed", Icon: Clock },
                   { s: "CONFIRMED", label: "Confirmed", Icon: CheckCircle2 },
@@ -597,11 +667,20 @@ const OrderDetailsModal = ({
                 ].map(({ s, label, Icon }, i) => {
                   const done = rank >= i;
                   return (
-                    <div key={s} className="flex flex-col items-center gap-1 z-10 relative">
-                      <div className={`h-8 w-8 rounded-full flex items-center justify-center transition-all ${done ? "bg-primary text-white shadow-sm" : "bg-white text-secondary/30 ring-1 ring-sage-200"}`}>
+                    <div
+                      key={s}
+                      className="flex flex-col items-center gap-1 z-10 relative"
+                    >
+                      <div
+                        className={`h-8 w-8 rounded-full flex items-center justify-center transition-all ${done ? "bg-primary text-white shadow-sm" : "bg-white text-secondary/30 ring-1 ring-sage-200"}`}
+                      >
                         <Icon size={14} />
                       </div>
-                      <span className={`text-[10px] font-semibold whitespace-nowrap ${done ? "text-primary-dark" : "text-secondary/40"}`}>{label}</span>
+                      <span
+                        className={`text-[10px] font-semibold whitespace-nowrap ${done ? "text-primary-dark" : "text-secondary/40"}`}
+                      >
+                        {label}
+                      </span>
                     </div>
                   );
                 })}
@@ -612,25 +691,37 @@ const OrderDetailsModal = ({
           {/* Status + Payment row */}
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-white rounded-xl p-4 border border-sage-100 shadow-sm">
-              <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider mb-2">Update Status</p>
+              <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider mb-2">
+                Update Status
+              </p>
               <select
                 value={order.status}
                 onChange={(e) => updateStatus(order.id, e.target.value)}
                 className="block w-full rounded-lg border-0 py-2 px-3 text-sm text-secondary ring-1 ring-inset ring-sage-200 focus:ring-2 focus:ring-primary bg-sage-50/30"
               >
                 {STATUS_OPTIONS.filter((o) => o.value !== "ALL").map((opt) => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
                 ))}
               </select>
             </div>
             <div className="bg-white rounded-xl p-4 border border-sage-100 shadow-sm">
-              <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider mb-2">Payment</p>
+              <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider mb-2">
+                Payment
+              </p>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-bold text-secondary">{order.payment?.method || "â€”"}</p>
-                  <p className="text-xs text-secondary/50 mt-0.5">â‚¹{order.total.toLocaleString("en-IN")}</p>
+                  <p className="text-sm font-bold text-secondary">
+                    {order.payment?.method || "—"}
+                  </p>
+                  <p className="text-xs text-secondary/50 mt-0.5">
+                    ₹{order.total.toLocaleString("en-IN")}
+                  </p>
                 </div>
-                <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${order.payment?.status === "COMPLETED" ? "bg-primary/10 text-primary-dark" : "bg-gold/10 text-gold-dark"}`}>
+                <span
+                  className={`px-2.5 py-1 rounded-full text-xs font-bold ${order.payment?.status === "COMPLETED" ? "bg-primary/10 text-primary-dark" : "bg-gold/10 text-gold-dark"}`}
+                >
                   {order.payment?.status || "PENDING"}
                 </span>
               </div>
@@ -640,23 +731,40 @@ const OrderDetailsModal = ({
           {/* Customer + Address */}
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-sage-50/50 rounded-xl p-4">
-              <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider flex items-center gap-1.5 mb-2"><User size={12} className="text-primary" /> Customer</p>
-              <p className="text-sm font-bold text-secondary">{order.user ? `${order.user.firstName} ${order.user.lastName}` : "Guest"}</p>
-              <p className="text-xs text-secondary/60 mt-0.5">{order.user?.email}</p>
-              <p className="text-xs text-secondary/50 mt-0.5">{order.user?.phone || "No phone"}</p>
+              <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider flex items-center gap-1.5 mb-2">
+                <User size={12} className="text-primary" /> Customer
+              </p>
+              <p className="text-sm font-bold text-secondary">
+                {order.user
+                  ? `${order.user.firstName} ${order.user.lastName}`
+                  : "Guest"}
+              </p>
+              <p className="text-xs text-secondary/60 mt-0.5">
+                {order.user?.email}
+              </p>
+              <p className="text-xs text-secondary/50 mt-0.5">
+                {order.user?.phone || "No phone"}
+              </p>
             </div>
             <div className="bg-sage-50/50 rounded-xl p-4">
-              <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider flex items-center gap-1.5 mb-2"><MapPin size={12} className="text-primary" /> Ship To</p>
+              <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider flex items-center gap-1.5 mb-2">
+                <MapPin size={12} className="text-primary" /> Ship To
+              </p>
               <p className="text-xs text-secondary/80 leading-relaxed">
-                {order.address.street}<br />
-                {order.address.city}, {order.address.state} {order.address.zipCode}<br />
+                {order.address.street}
+                <br />
+                {order.address.city}, {order.address.state}{" "}
+                {order.address.zipCode}
+                <br />
                 {order.address.country}
               </p>
             </div>
           </div>
 
           {/* Shiprocket Panel */}
-          <div className={`rounded-xl p-4 border ${order.shipment?.awbCode ? "bg-sky-50/40 border-sky-200" : "bg-white border-sage-100 shadow-sm"}`}>
+          <div
+            className={`rounded-xl p-4 border ${order.shipment?.awbCode ? "bg-sky-50/40 border-sky-200" : "bg-white border-sage-100 shadow-sm"}`}
+          >
             <div className="flex items-center justify-between mb-3">
               <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider flex items-center gap-1.5">
                 <Truck size={12} className="text-sky-600" /> Shiprocket Tracking
@@ -667,31 +775,51 @@ const OrderDetailsModal = ({
                   disabled={pushingShiprocket}
                   className="inline-flex items-center gap-1.5 rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-sky-700 disabled:opacity-60 transition-colors"
                 >
-                  {pushingShiprocket ? <Loader2 size={12} className="animate-spin" /> : <Zap size={12} />}
-                  {pushingShiprocket ? "Pushingâ€¦" : "Push to Shiprocket"}
+                  {pushingShiprocket ? (
+                    <Loader2 size={12} className="animate-spin" />
+                  ) : (
+                    <Zap size={12} />
+                  )}
+                  {pushingShiprocket ? "Pushing…" : "Push to Shiprocket"}
                 </button>
               )}
             </div>
             {order.shipment?.awbCode ? (
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div>
-                  <p className="text-xs text-secondary/50 font-semibold">AWB Code</p>
-                  <p className="font-mono font-bold text-sky-700 mt-0.5">{order.shipment.awbCode}</p>
+                  <p className="text-xs text-secondary/50 font-semibold">
+                    AWB Code
+                  </p>
+                  <p className="font-mono font-bold text-sky-700 mt-0.5">
+                    {order.shipment.awbCode}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-xs text-secondary/50 font-semibold">Courier</p>
-                  <p className="font-semibold text-secondary mt-0.5">{order.shipment.courierName || "â€”"}</p>
+                  <p className="text-xs text-secondary/50 font-semibold">
+                    Courier
+                  </p>
+                  <p className="font-semibold text-secondary mt-0.5">
+                    {order.shipment.courierName || "—"}
+                  </p>
                 </div>
                 {order.shipment.shiprocketStatus && (
                   <div>
-                    <p className="text-xs text-secondary/50 font-semibold">Shiprocket Status</p>
-                    <p className="font-medium text-secondary mt-0.5">{order.shipment.shiprocketStatus}</p>
+                    <p className="text-xs text-secondary/50 font-semibold">
+                      Shiprocket Status
+                    </p>
+                    <p className="font-medium text-secondary mt-0.5">
+                      {order.shipment.shiprocketStatus}
+                    </p>
                   </div>
                 )}
                 {order.shipment.trackingUrl && (
                   <div className="col-span-2">
-                    <a href={order.shipment.trackingUrl} target="_blank" rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-600 hover:text-sky-700">
+                    <a
+                      href={order.shipment.trackingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-600 hover:text-sky-700"
+                    >
                       <ExternalLink size={12} /> Track on Shiprocket
                     </a>
                   </div>
@@ -699,20 +827,28 @@ const OrderDetailsModal = ({
               </div>
             ) : (
               <p className="text-xs text-secondary/50">
-                Not yet pushed. Mark order as <strong>Confirmed</strong> to auto-push, or click the button above to push manually.
+                Not yet pushed. Mark order as <strong>Confirmed</strong> to
+                auto-push, or click the button above to push manually.
               </p>
             )}
           </div>
 
           {/* Order Items */}
           <div>
-            <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider mb-3">Order Items</p>
+            <p className="text-xs font-bold text-secondary/50 uppercase tracking-wider mb-3">
+              Order Items
+            </p>
             <div className="rounded-xl overflow-hidden border border-sage-100">
               <table className="min-w-full divide-y divide-sage-100">
                 <thead className="bg-sage-50/60">
                   <tr>
                     {["Product", "Price", "Qty", "Total"].map((h) => (
-                      <th key={h} className={`px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-secondary/50 ${h !== "Product" ? "text-right" : "text-left"}`}>{h}</th>
+                      <th
+                        key={h}
+                        className={`px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-secondary/50 ${h !== "Product" ? "text-right" : "text-left"}`}
+                      >
+                        {h}
+                      </th>
                     ))}
                   </tr>
                 </thead>
@@ -721,26 +857,56 @@ const OrderDetailsModal = ({
                     <tr key={item.id} className="hover:bg-sage-50/30">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <img src={item.product.thumbnail} alt="" className="h-9 w-9 rounded-lg object-cover border border-sage-100 shrink-0" />
-                          <span className="text-sm font-medium text-secondary">{item.product.name}</span>
+                          <img
+                            src={item.product.thumbnail}
+                            alt=""
+                            className="h-9 w-9 rounded-lg object-cover border border-sage-100 shrink-0"
+                          />
+                          <span className="text-sm font-medium text-secondary">
+                            {item.product.name}
+                          </span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-right text-sm text-secondary/70">â‚¹{item.price.toLocaleString("en-IN")}</td>
-                      <td className="px-4 py-3 text-right text-sm text-secondary/70">{item.quantity}</td>
-                      <td className="px-4 py-3 text-right text-sm font-bold text-secondary">â‚¹{item.total.toLocaleString("en-IN")}</td>
+                      <td className="px-4 py-3 text-right text-sm text-secondary/70">
+                        ₹{item.price.toLocaleString("en-IN")}
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm text-secondary/70">
+                        {item.quantity}
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm font-bold text-secondary">
+                        ₹{item.total.toLocaleString("en-IN")}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot className="divide-y divide-sage-100 border-t border-sage-100 bg-sage-50/40">
-                  {[{ label: "Subtotal", value: order.subtotal }, { label: "Shipping", value: order.shippingCost }, { label: "Tax (GST)", value: order.tax }].map((r) => (
+                  {[
+                    { label: "Subtotal", value: order.subtotal },
+                    { label: "Shipping", value: order.shippingCost },
+                    { label: "Tax (GST)", value: order.tax },
+                  ].map((r) => (
                     <tr key={r.label}>
-                      <td colSpan={3} className="px-4 py-2 text-right text-xs text-secondary/50 font-semibold uppercase tracking-wider">{r.label}</td>
-                      <td className="px-4 py-2 text-right text-sm text-secondary">â‚¹{r.value.toLocaleString("en-IN")}</td>
+                      <td
+                        colSpan={3}
+                        className="px-4 py-2 text-right text-xs text-secondary/50 font-semibold uppercase tracking-wider"
+                      >
+                        {r.label}
+                      </td>
+                      <td className="px-4 py-2 text-right text-sm text-secondary">
+                        ₹{r.value.toLocaleString("en-IN")}
+                      </td>
                     </tr>
                   ))}
                   <tr>
-                    <td colSpan={3} className="px-4 py-3 text-right text-sm font-bold text-secondary uppercase">Total</td>
-                    <td className="px-4 py-3 text-right text-lg font-bold text-primary">â‚¹{order.total.toLocaleString("en-IN")}</td>
+                    <td
+                      colSpan={3}
+                      className="px-4 py-3 text-right text-sm font-bold text-secondary uppercase"
+                    >
+                      Total
+                    </td>
+                    <td className="px-4 py-3 text-right text-lg font-bold text-primary">
+                      ₹{order.total.toLocaleString("en-IN")}
+                    </td>
                   </tr>
                 </tfoot>
               </table>
@@ -750,34 +916,66 @@ const OrderDetailsModal = ({
           {/* Manual Shipment Override */}
           <details className="group">
             <summary className="cursor-pointer text-xs font-bold text-secondary/40 uppercase tracking-wider flex items-center gap-1.5 select-none hover:text-secondary/70 transition-colors py-1">
-              <ArrowRight size={12} className="group-open:rotate-90 transition-transform" /> Manual Shipment Override
+              <ArrowRight
+                size={12}
+                className="group-open:rotate-90 transition-transform"
+              />{" "}
+              Manual Shipment Override
             </summary>
-            <form onSubmit={handleShipmentSubmit} className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 bg-sage-50/50 rounded-xl p-4">
+            <form
+              onSubmit={handleShipmentSubmit}
+              className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 bg-sage-50/50 rounded-xl p-4"
+            >
               {[
-                { label: "Carrier Name", key: "carrier", placeholder: "Blue Dart, FedExâ€¦" },
-                { label: "Tracking Number", key: "trackingNumber", placeholder: "AWB / tracking #" },
-                { label: "Tracking URL", key: "trackingUrl", placeholder: "https://â€¦" },
-                { label: "Est. Delivery", key: "estimatedDelivery", type: "date" },
+                {
+                  label: "Carrier Name",
+                  key: "carrier",
+                  placeholder: "Blue Dart, FedEx…",
+                },
+                {
+                  label: "Tracking Number",
+                  key: "trackingNumber",
+                  placeholder: "AWB / tracking #",
+                },
+                {
+                  label: "Tracking URL",
+                  key: "trackingUrl",
+                  placeholder: "https://…",
+                },
+                {
+                  label: "Est. Delivery",
+                  key: "estimatedDelivery",
+                  type: "date",
+                },
               ].map((f) => (
                 <div key={f.key}>
-                  <label className="block text-xs font-semibold text-secondary/60 mb-1">{f.label}</label>
+                  <label className="block text-xs font-semibold text-secondary/60 mb-1">
+                    {f.label}
+                  </label>
                   <input
                     type={f.type || "text"}
                     value={(shipmentForm as any)[f.key]}
-                    onChange={(e) => setShipmentForm({ ...shipmentForm, [f.key]: e.target.value })}
+                    onChange={(e) =>
+                      setShipmentForm({
+                        ...shipmentForm,
+                        [f.key]: e.target.value,
+                      })
+                    }
                     className="w-full rounded-lg border-0 py-2 px-3 text-sm text-secondary ring-1 ring-inset ring-sage-200 focus:ring-2 focus:ring-primary bg-white"
                     placeholder={f.placeholder}
                   />
                 </div>
               ))}
               <div className="sm:col-span-2 flex justify-end">
-                <button type="submit" className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-dark transition-colors">
+                <button
+                  type="submit"
+                  className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-dark transition-colors"
+                >
                   Save Override
                 </button>
               </div>
             </form>
           </details>
-
         </div>
       </div>
     </div>
