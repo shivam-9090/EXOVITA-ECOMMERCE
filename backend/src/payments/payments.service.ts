@@ -267,7 +267,9 @@ export class PaymentsService {
       // Auto-push to Shiprocket after successful Razorpay payment
       if (this.shiprocket.isConfigured) {
         this.pushToShiprocket(payment.orderId).catch((err) =>
-          this.logger.error(`Shiprocket push failed after payment: ${err.message}`),
+          this.logger.error(
+            `Shiprocket push failed after payment: ${err.message}`,
+          ),
         );
       }
     }
@@ -279,7 +281,15 @@ export class PaymentsService {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
       include: {
-        user: { select: { id: true, email: true, firstName: true, lastName: true, phone: true } },
+        user: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            phone: true,
+          },
+        },
         items: { include: { product: true } },
         address: true,
         payment: true,
@@ -300,7 +310,9 @@ export class PaymentsService {
         trackingNumber: srRes.awb_code || null,
       },
     });
-    this.logger.log(`Shiprocket order pushed after Razorpay payment: orderId=${orderId} awb=${srRes.awb_code}`);
+    this.logger.log(
+      `Shiprocket order pushed after Razorpay payment: orderId=${orderId} awb=${srRes.awb_code}`,
+    );
   }
 
   async handleWebhook(signature: string, payload: Buffer) {
@@ -348,6 +360,11 @@ export class PaymentsService {
       return;
     }
 
+    // Idempotency: skip if already processed (prevents duplicate emails on webhook retry)
+    if (payment.status === PaymentStatus.COMPLETED) {
+      return;
+    }
+
     await this.prisma.payment.update({
       where: { id: payment.id },
       data: {
@@ -371,12 +388,31 @@ export class PaymentsService {
       where: { id: payment.orderId },
       data: { status: "CONFIRMED" },
     });
+
+    // Clear cart (webhook may fire before verifyPayment clears it)
+    const order = await this.prisma.order.findUnique({
+      where: { id: payment.orderId },
+      select: { userId: true },
+    });
+    if (order?.userId) {
+      const userCart = await this.prisma.cart.findUnique({
+        where: { userId: order.userId },
+      });
+      if (userCart) {
+        await this.prisma.cartItem.deleteMany({
+          where: { cartId: userCart.id },
+        });
+      }
+    }
+
     // Send invoice email via webhook
     this.sendInvoiceEmail(payment.orderId).catch(() => {});
     // Auto-push to Shiprocket via webhook
     if (this.shiprocket.isConfigured) {
       this.pushToShiprocket(payment.orderId).catch((err) =>
-        this.logger.error(`Shiprocket push failed after webhook: ${err.message}`),
+        this.logger.error(
+          `Shiprocket push failed after webhook: ${err.message}`,
+        ),
       );
     }
   }
