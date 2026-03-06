@@ -10,6 +10,7 @@ import { PaymentMethod, PaymentStatus } from "@prisma/client";
 import Razorpay from "razorpay";
 import * as crypto from "crypto";
 import { EmailService } from "../email/email.service";
+import { ShiprocketService } from "../shipping/shiprocket.service";
 
 @Injectable()
 export class PaymentsService {
@@ -24,6 +25,7 @@ export class PaymentsService {
     private prisma: PrismaService,
     private configService: ConfigService,
     private email: EmailService,
+    private shiprocket: ShiprocketService,
   ) {
     this.razorpayKeyId =
       this.configService.get<string>("RAZORPAY_KEY_ID") || "";
@@ -259,11 +261,46 @@ export class PaymentsService {
         });
       }
 
-      // Send invoice email for Razorpay payment
+      // Send confirmation + invoice email for Razorpay payment
       this.sendInvoiceEmail(payment.orderId).catch(() => {});
+
+      // Auto-push to Shiprocket after successful Razorpay payment
+      if (this.shiprocket.isConfigured) {
+        this.pushToShiprocket(payment.orderId).catch((err) =>
+          this.logger.error(`Shiprocket push failed after payment: ${err.message}`),
+        );
+      }
     }
 
     return { success: true };
+  }
+
+  private async pushToShiprocket(orderId: string): Promise<void> {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: {
+        user: { select: { id: true, email: true, firstName: true, lastName: true, phone: true } },
+        items: { include: { product: true } },
+        address: true,
+        payment: true,
+        shipment: true,
+      },
+    });
+    if (!order || order.shipment?.shiprocketOrderId) return;
+    const srRes = await this.shiprocket.createOrder(order as any);
+    await this.prisma.shipment.update({
+      where: { orderId },
+      data: {
+        shiprocketOrderId: String(srRes.order_id),
+        shiprocketShipmentId: String(srRes.shipment_id),
+        awbCode: srRes.awb_code || null,
+        courierName: srRes.courier_name || null,
+        shiprocketStatus: srRes.status || null,
+        carrier: srRes.courier_name || null,
+        trackingNumber: srRes.awb_code || null,
+      },
+    });
+    this.logger.log(`Shiprocket order pushed after Razorpay payment: orderId=${orderId} awb=${srRes.awb_code}`);
   }
 
   async handleWebhook(signature: string, payload: Buffer) {
@@ -336,6 +373,12 @@ export class PaymentsService {
     });
     // Send invoice email via webhook
     this.sendInvoiceEmail(payment.orderId).catch(() => {});
+    // Auto-push to Shiprocket via webhook
+    if (this.shiprocket.isConfigured) {
+      this.pushToShiprocket(payment.orderId).catch((err) =>
+        this.logger.error(`Shiprocket push failed after webhook: ${err.message}`),
+      );
+    }
   }
 
   private async handlePaymentFailed(paymentEntity: any) {
