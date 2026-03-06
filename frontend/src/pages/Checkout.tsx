@@ -32,7 +32,7 @@ interface Address {
 const Checkout: React.FC = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { items, cartTotal, refreshCart } = useCart();
+  const { items, cartTotal, refreshCart, cartLoaded } = useCart();
 
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string>("");
@@ -73,13 +73,15 @@ const Checkout: React.FC = () => {
       return;
     }
 
+    if (!cartLoaded) return; // Wait for cart to finish loading before checking emptiness
+
     if (items.length === 0) {
       navigate("/cart");
       return;
     }
 
     fetchAddresses();
-  }, [user, authLoading, items.length, navigate]);
+  }, [user, authLoading, items.length, cartLoaded, navigate]);
 
   const handleGPSFill = () => {
     if (!navigator.geolocation) {

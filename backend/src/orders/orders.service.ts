@@ -234,10 +234,12 @@ export class OrdersService {
         });
       }
 
-      // Clear cart
-      await tx.cartItem.deleteMany({
-        where: { cartId: cart.id },
-      });
+      // Clear cart (skip for Razorpay - cart is cleared after payment verification)
+      if (paymentMethod !== PaymentMethod.RAZORPAY) {
+        await tx.cartItem.deleteMany({
+          where: { cartId: cart.id },
+        });
+      }
 
       // Track coupon usage
       for (const couponId of usedCoupons) {

@@ -246,6 +246,17 @@ export class PaymentsService {
         where: { id: payment.orderId },
         data: { status: "CONFIRMED" },
       });
+
+      // Clear the user's cart after successful Razorpay payment
+      const userCart = await this.prisma.cart.findUnique({
+        where: { userId },
+      });
+      if (userCart) {
+        await this.prisma.cartItem.deleteMany({
+          where: { cartId: userCart.id },
+        });
+      }
+
       // Send invoice email for Razorpay payment
       this.sendInvoiceEmail(payment.orderId).catch(() => {});
     }

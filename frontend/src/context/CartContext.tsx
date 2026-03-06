@@ -30,6 +30,7 @@ interface CartContextType {
   cartCount: number;
   cartTotal: number;
   loading: boolean;
+  cartLoaded: boolean;
   refreshCart: () => Promise<void>;
 }
 
@@ -40,6 +41,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [items, setItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [cartLoaded, setCartLoaded] = useState(false);
   const { user } = useAuth();
 
   const fetchCart = async () => {
@@ -62,8 +64,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         title: item.product.name,
         name: item.product.name,
         price: item.discountedPrice || item.originalPrice || item.product.price,
-        image: item.product.thumbnail || (item.product.images && item.product.images[0]) || "/logo.png",
-        thumbnail: item.product.thumbnail || (item.product.images && item.product.images[0]) || "/logo.png",
+        image:
+          item.product.thumbnail ||
+          (item.product.images && item.product.images[0]) ||
+          "/logo.png",
+        thumbnail:
+          item.product.thumbnail ||
+          (item.product.images && item.product.images[0]) ||
+          "/logo.png",
         quantity: item.quantity,
         couponId: item.couponId,
         couponCode: item.couponCode,
@@ -78,6 +86,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         setItems([]);
       }
       // Otherwise keep existing items to prevent flickering
+    } finally {
+      setCartLoaded(true);
     }
   };
 
@@ -175,6 +185,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         cartCount,
         cartTotal,
         loading,
+        cartLoaded,
         refreshCart,
       }}
     >
