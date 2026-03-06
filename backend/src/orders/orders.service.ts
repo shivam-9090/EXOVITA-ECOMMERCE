@@ -85,6 +85,45 @@ export class OrdersService {
     }
   }
 
+  // Push a COD order to Shiprocket right after creation
+  private async pushCODToShiprocket(orderId: string): Promise<void> {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            phone: true,
+          },
+        },
+        items: { include: { product: true } },
+        address: true,
+        payment: true,
+        shipment: true,
+      },
+    });
+    if (!order || order.shipment?.shiprocketOrderId) return;
+    const srRes = await this.shiprocket.createOrder(order as any);
+    await this.prisma.shipment.update({
+      where: { orderId },
+      data: {
+        shiprocketOrderId: String(srRes.order_id),
+        shiprocketShipmentId: String(srRes.shipment_id),
+        awbCode: srRes.awb_code || null,
+        courierName: srRes.courier_name || null,
+        shiprocketStatus: srRes.status || null,
+        carrier: srRes.courier_name || null,
+        trackingNumber: srRes.awb_code || null,
+      },
+    });
+    this.logger.log(
+      `Shiprocket order pushed for COD ${orderId}: srOrderId=${srRes.order_id} awb=${srRes.awb_code}`,
+    );
+  }
+
   // Create new order from cart
   async createOrder(userId: string, createOrderDto: any) {
     const { addressId, paymentMethod, notes } = createOrderDto;
@@ -269,6 +308,15 @@ export class OrdersService {
     // For COD: send confirmation immediately. For Razorpay: email sent after payment is verified.
     if (paymentMethod === PaymentMethod.COD) {
       this.sendOrderEmail(order.id, "confirmation").catch(() => {});
+
+      // Auto-push COD orders to Shiprocket immediately (no payment wait needed)
+      if (this.shiprocket.isConfigured) {
+        this.pushCODToShiprocket(order.id).catch((err) =>
+          this.logger.error(
+            `Shiprocket push failed for COD order ${order.id}: ${err.message}`,
+          ),
+        );
+      }
     }
 
     return {

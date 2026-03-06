@@ -211,9 +211,11 @@ const MyOrders: React.FC = () => {
   const courierName = (s?: OrderShipment) => s?.courierName || s?.carrier;
   const getImg = (item: OrderItem) => item.product?.thumbnail || null;
 
-  const filtered = orders.filter(
-    (o) => filter === "ALL" || o.status === filter,
-  );
+  const filtered = orders.filter((o) => {
+    // Hide PENDING Razorpay orders — these are incomplete payments (modal opened but not paid)
+    if (o.status === "PENDING" && o.payment?.method === "RAZORPAY") return false;
+    return filter === "ALL" || o.status === filter;
+  });
 
   if (loading)
     return (

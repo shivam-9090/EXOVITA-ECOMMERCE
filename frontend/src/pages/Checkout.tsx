@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import { MapPin, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -39,6 +39,7 @@ const Checkout: React.FC = () => {
   const [loadingAddresses, setLoadingAddresses] = useState(true);
   const [savingAddress, setSavingAddress] = useState(false);
   const [placingOrder, setPlacingOrder] = useState(false);
+  const orderPlacedRef = useRef(false);
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [gpsLoading, setGpsLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"RAZORPAY" | "COD">(
@@ -74,6 +75,7 @@ const Checkout: React.FC = () => {
     }
 
     if (!cartLoaded) return; // Wait for cart to finish loading before checking emptiness
+    if (orderPlacedRef.current) return; // Don't redirect after order is placed
 
     if (items.length === 0) {
       navigate("/cart");
@@ -255,6 +257,7 @@ const Checkout: React.FC = () => {
       }
 
       if (paymentMethod === "COD") {
+        orderPlacedRef.current = true;
         await refreshCart();
         toast.success("Order placed successfully!");
         navigate("/my-orders");
